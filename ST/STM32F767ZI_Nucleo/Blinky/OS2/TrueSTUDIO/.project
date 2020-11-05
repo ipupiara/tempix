@@ -385,9 +385,14 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
-			<name>ST/BSP/Startup/STM32F7xx/GCC/startup_stm32f767xx.s</name>
+			<name>ST/BSP/Startup/STM32F7xx/GCC/STM32F756ZGTX_FLASH.ld</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/BSP/Startup/STM32F7xx/GCC/startup_stm32f767xx.s</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/BSP/Startup/STM32F7xx/GCC/STM32F756ZGTX_FLASH.ld</locationURI>
+		</link>
+		<link>
+			<name>ST/BSP/Startup/STM32F7xx/GCC/startup_stm32f756zgtx.s</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/BSP/Startup/STM32F7xx/GCC/startup_stm32f756zgtx.s</locationURI>
 		</link>
 		<link>
 			<name>ST/BSP/Startup/STM32F7xx/GCC/stm32f7_flash.ld</name>
@@ -1438,6 +1443,11 @@
 			<name>ST/BSP/SDK/STM32CubeF7/Drivers/CMSIS/Device/ST/STM32F7xx/Include</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>ST/BSP/SDK/STM32CubeF7/Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f756xx.h</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/BSP/SDK/STM32CubeF7/Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f756xx.h</locationURI>
 		</link>
 		<link>
 			<name>ST/BSP/SDK/STM32CubeF7/Drivers/CMSIS/Device/ST/STM32F7xx/Include/stm32f767xx.h</name>
