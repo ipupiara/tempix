@@ -34,14 +34,10 @@
 *********************************************************************************************************
 */
 
-#include  <cpu.h>
-#include  <lib_mem.h>
-#include  <os.h>
-#include  <bsp_os.h>
-#include  <bsp_clk.h>
-#include  <bsp_led.h>
-#include  <bsp_int.h>
-#include  <stm32f7xx_hal.h>
+#include  <uosii-includes.h>
+
+#include <uart-comms.h>
+#include <uart-hw.h>
 
 #include  "../app_cfg.h"
 
@@ -86,6 +82,9 @@ static  void  StartupTask (void  *p_arg);
 *********************************************************************************************************
 */
 
+
+
+
 int  main (void)
 {
 #if OS_TASK_NAME_EN > 0u
@@ -101,7 +100,9 @@ int  main (void)
     CPU_IntDis();                                               /* Disable all Interrupts                               */
     CPU_Init();                                                 /* Initialize the uC/CPU services                       */
 
-    OSInit();                                                   /* Initialize uC/OS-II                                  */
+    OSInit();                                                   /* Initialize uC/OS-II    */
+
+
 
     OSTaskCreateExt( StartupTask,                               /* Create the startup task                              */
                      0,
@@ -146,12 +147,16 @@ static  void  StartupTask (void *p_arg)
 {
    (void)p_arg;
 
+   BSP_OS_TickEnable();                                        /* Enable the tick timer and interrupt                  */
+   BSP_LED_Init();                                             /* Initialize LEDs                                      */
+//  OS_TRACE_INIT();
 
-    OS_TRACE_INIT();                                            /* Initialize the OS Trace recorder                     */
+    init_printf();
+    start_printf();
+	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
+	printStartMessage();
+                                               /* Initialize the OS Trace recorder                     */
 
-    BSP_OS_TickEnable();                                        /* Enable the tick timer and interrupt                  */
-
-    BSP_LED_Init();                                             /* Initialize LEDs                                      */
 
 #if (OS_TASK_STAT_EN > 0u)
     OSStatInit();                                               /* Determine CPU capacity                               */
@@ -162,7 +167,14 @@ static  void  StartupTask (void *p_arg)
 #endif
 
     while (DEF_TRUE) {                                          /* Task body, always written as an infinite loop.       */
-        BSP_LED_Toggle(USER_LED_ALL);
+        BSP_LED_Toggle(USER_LD1);
+//        if (commsError > 0) {
+        	BSP_LED_Toggle(USER_LD3);
+//        } else {
+//        	BSP_LED_Off(USER_LD3);
+//        }
         OSTimeDlyHMSM(0u, 0u, 1u, 0u);
+//        printStartMessage();
+        info_printf("\nmsgCounter %u msgNr %u\n errMsgStrLen %u errNdtr\n", txMsgCounter, msgNr, errMsgStrLen, errMsgNdtr );
     }
 }

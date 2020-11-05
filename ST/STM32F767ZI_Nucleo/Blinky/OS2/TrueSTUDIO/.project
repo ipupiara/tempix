@@ -225,11 +225,6 @@
 			<locationURI>PARENT-4-PROJECT_LOC/BSP/STM32F767ZI_Nucleo/bsp_os.h</locationURI>
 		</link>
 		<link>
-			<name>ST/BSP/STM32F767ZI_Nucleo/stm32f7xx_hal_conf.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/BSP/STM32F767ZI_Nucleo/stm32f7xx_hal_conf.h</locationURI>
-		</link>
-		<link>
 			<name>ST/BSP/Startup/STM32F7xx</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -253,6 +248,36 @@
 			<name>ST/STM32F767ZI_Nucleo/Blinky/lib_cfg.h</name>
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/lib_cfg.h</locationURI>
+		</link>
+		<link>
+			<name>ST/STM32F767ZI_Nucleo/tempix</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>ST/STM32F767ZI_Nucleo/tempix/uart</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
+			<name>ST/STM32F767ZI_Nucleo/tempix/uart/uart-hw.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/tempix/uart/uart-hw.h</locationURI>
+		</link>
+		<link>
+			<name>ST/STM32F767ZI_Nucleo/tempix/uart/uart-hw.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/tempix/uart/uart-hw.c</locationURI>
+		</link>
+		<link>
+			<name>ST/STM32F767ZI_Nucleo/tempix/uart/uart-comms.h</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/tempix/uart/uart-comms.h</locationURI>
+		</link>
+		<link>
+			<name>ST/STM32F767ZI_Nucleo/tempix/uart/uart-comms.c</name>
+			<type>1</type>
+			<locationURI>PARENT-2-PROJECT_LOC/tempix/uart/uart-comms.c</locationURI>
 		</link>
 		<link>
 			<name>Micrium/Software/uC-CPU/ARM-Cortex-M/ARMv7-M</name>
@@ -358,6 +383,16 @@
 			<name>ST/STM32F767ZI_Nucleo/Blinky/OS2/os_cfg.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/os_cfg.h</locationURI>
+		</link>
+		<link>
+			<name>ST/STM32F767ZI_Nucleo/Blinky/OS2/stm32f7xx_hal_conf.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/stm32f7xx_hal_conf.h</locationURI>
+		</link>
+		<link>
+			<name>ST/STM32F767ZI_Nucleo/Blinky/OS2/uosii-includes.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/uosii-includes.h</locationURI>
 		</link>
 		<link>
 			<name>Micrium/Software/uC-CPU/ARM-Cortex-M/ARMv7-M/GNU</name>

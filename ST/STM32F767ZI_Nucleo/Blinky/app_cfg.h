@@ -51,9 +51,12 @@
 
 /*
 *********************************************************************************************************
-*                                           TASK PRIORITIES
+*                                           TASK PRIORITIES    the lower the numb
 *********************************************************************************************************
 */
+
+
+#define  SerialQ_TASK_PRIO                   6u
 
 #define  OS_TASK_TMR_PRIO                (OS_LOWEST_PRIO - 2u)  /* Only required for uC/OS-II                           */
 
@@ -67,7 +70,9 @@
 *********************************************************************************************************
 */
 
-#define  APP_CFG_STARTUP_TASK_STK_SIZE                   256u
+#define APP_CFG_DEFAULT_TASK_STK_SIZE     256u
+
+#define  APP_CFG_STARTUP_TASK_STK_SIZE    APP_CFG_DEFAULT_TASK_STK_SIZE
 
 
 /*
