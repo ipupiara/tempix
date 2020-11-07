@@ -80,7 +80,7 @@ void incErrorCounter(DMA_HandleTypeDef *hdma)
 	}
 }
 
-static void uart1Isr(void)
+static void USART1_IRQHandler(void)
 {
 	INT8U idleDetected = 0;
 
@@ -342,7 +342,7 @@ INT8U initUartHw()
 
 
 		  HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
-		  BSP_IntVectSet (USART1_IRQn,5,0,uart1Isr);
+		  BSP_IntVectSet (USART1_IRQn,5,0,USART1_IRQHandler);
 		  BSP_IntVectSet (DMA2_Stream2_IRQn,6,0,DMA2_Stream2_IRQHandler);
 		  BSP_IntVectSet (DMA2_Stream7_IRQn,7,0,DMA2_Stream7_IRQHandler);
 		  disableUartInterrupts();
