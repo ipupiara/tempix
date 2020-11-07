@@ -178,3 +178,5 @@ static  void  StartupTask (void *p_arg)
         info_printf("\nmsgCounter %u msgNr %u\n errMsgStrLen %u errNdtr\n", txMsgCounter, msgNr, errMsgStrLen, errMsgNdtr );
     }
 }
+
+
