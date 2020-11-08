@@ -19,6 +19,7 @@ INT8U startUartHw();
 
 INT8U sendUartString(char* sndStr);
 
+void USART1_IRQHandler(void);
 
 INT8U enableUartInterrupts();
 

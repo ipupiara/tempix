@@ -200,7 +200,7 @@ void       OSStartHighRdy         (void);
 void       OS_CPU_SysTickInit     (INT32U  cnts);
 void       OS_CPU_SysTickInitFreq (INT32U  cpu_freq);
 
-void       OS_CPU_SysTickHandler  (void);
+void       SysTick_Handler  (void);
 void       OS_CPU_PendSVHandler   (void);
 
 #if (OS_CPU_ARM_FP_EN > 0u)

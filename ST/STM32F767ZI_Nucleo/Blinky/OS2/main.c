@@ -175,7 +175,7 @@ static  void  StartupTask (void *p_arg)
 //        }
         OSTimeDlyHMSM(0u, 0u, 1u, 0u);
 //        printStartMessage();
-        info_printf("\nmsgCounter %u msgNr %u\n errMsgStrLen %u errNdtr\n", txMsgCounter, msgNr, errMsgStrLen, errMsgNdtr );
+//        info_printf("\nmsgCounter %u msgNr %u\n errMsgStrLen %u errNdtr\n", txMsgCounter, msgNr, errMsgStrLen, errMsgNdtr );
     }
 }
 

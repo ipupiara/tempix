@@ -55,7 +55,7 @@
 #define OS_MAX_QS                 4u   /* Max. number of queue control blocks in your application      */
 #define OS_MAX_TASKS             20u   /* Max. number of tasks in your application, MUST be >= 2       */
 
-#define OS_SCHED_LOCK_EN          0u   /* Include code for OSSchedLock() and OSSchedUnlock()           */
+#define OS_SCHED_LOCK_EN          1u   /* Include code for OSSchedLock() and OSSchedUnlock()           */
 
 #define OS_TICK_STEP_EN           0u   /* Enable tick stepping feature for uC/OS-View                  */
 #define OS_TICKS_PER_SEC       1000u   /* Set the number of ticks in one second                        */
@@ -81,7 +81,7 @@
 #define OS_TASK_STAT_EN           0u   /*     Enable (1) or Disable(0) the statistics task             */
 #define OS_TASK_STAT_STK_CHK_EN   0u   /*     Check task stacks from statistic task                    */
 #define OS_TASK_SUSPEND_EN        1u   /*     Include code for OSTaskSuspend() and OSTaskResume()      */
-#define OS_TASK_SW_HOOK_EN        0u   /*     Include code for OSTaskSwHook()                          */
+#define OS_TASK_SW_HOOK_EN        1u   /*     Include code for OSTaskSwHook()                          */
 
 
                                        /* ----------------------- EVENT FLAGS ------------------------ */

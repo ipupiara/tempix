@@ -80,7 +80,7 @@ void incErrorCounter(DMA_HandleTypeDef *hdma)
 	}
 }
 
-static void USART1_IRQHandler(void)
+void USART1_IRQHandler(void)
 {
 	INT8U idleDetected = 0;
 
