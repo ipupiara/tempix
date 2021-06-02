@@ -1,0 +1,56 @@
+!SESSION 2021-06-02 17:04:22.910 -----------------------------------------------
+eclipse.buildId=Version 1.5.1
+java.version=1.8.0_272
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2021-06-02 17:05:03.372
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2021-06-02 17:05:03.453
+!MESSAGE Log4j initialized with config file /home/peetz/projects/stm32/tempix/.metadata/.log4j.xml
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2021-06-02 17:05:07.047
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 4 4 2021-06-02 17:05:07.489
+!MESSAGE com.st.stm32cube.ide.mcu.ide/META-INF/version/build_ref file not found, build reference will not be reported into properties
+
+!ENTRY org.eclipse.core.variables 4 120 2021-06-02 17:06:17.059
+!MESSAGE Dynamic variable extension from bundle 'com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32' overrides existing extension variable 'gnu_tools_for_stm32_compiler_path' from bundle 'com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update'
+
+!ENTRY org.eclipse.cdt.core 1 0 2021-06-02 17:06:39.991
+!MESSAGE Indexed 'tempix-03' (122 sources, 199 headers) in 17.1 sec: 21,987 declarations; 97,265 references; 0 unresolved inclusions; 155 syntax errors; 54 unresolved names (0.045%)
+!SESSION 2021-06-02 17:12:13.611 -----------------------------------------------
+eclipse.buildId=Version 1.5.1
+java.version=1.8.0_272
+java.vendor=AdoptOpenJDK
+BootLoader constants: OS=linux, ARCH=x86_64, WS=gtk, NL=en_US
+Command-line arguments:  -os linux -ws gtk -arch x86_64
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 4 4 2021-06-02 17:12:21.282
+!MESSAGE CubeMX plugin appears to be active, Log4j initialization might be too late.
+
+!ENTRY com.st.stm32cube.ide.mcu.informationcenter 1 1 2021-06-02 17:12:21.368
+!MESSAGE Log4j initialized with config file /home/peetz/projects/stm32/tempix/.metadata/.log4j.xml
+
+!ENTRY org.eclipse.core.variables 4 120 2021-06-02 17:12:23.061
+!MESSAGE Dynamic variable extension from bundle 'com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32' overrides existing extension variable 'gnu_tools_for_stm32_compiler_path' from bundle 'com.st.stm32cube.ide.mcu.externaltools.gnu-tools-for-stm32.7-2018-q2-update'
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 1 1 2021-06-02 17:12:28.382
+!MESSAGE Started RMI Server, listening on port 41337
+
+!ENTRY com.st.stm32cube.ide.mcu.ide 4 4 2021-06-02 17:12:28.812
+!MESSAGE com.st.stm32cube.ide.mcu.ide/META-INF/version/build_ref file not found, build reference will not be reported into properties
+
+!ENTRY com.st.stm32cube.ide.mcu.stackanalyzer 4 0 2021-06-02 17:12:44.354
+!MESSAGE Stackanalyzer failed to analyze input
+!STACK 0
+java.lang.NullPointerException
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.inputChanged(StackAnalyzerView.java:900)
+	at com.st.stm32cube.ide.mcu.stackanalyzer.ui.StackAnalyzerView.lambda$15(StackAnalyzerView.java:1232)
+	at java.lang.Thread.run(Thread.java:748)
+
+!ENTRY org.eclipse.cdt.core 1 0 2021-06-02 17:20:15.914
+!MESSAGE Indexed 'tempixActuator' (19 sources, 78 headers) in 5.64 sec: 3,658 declarations; 13,170 references; 0 unresolved inclusions; 1 syntax errors; 2 unresolved names (0.012%)

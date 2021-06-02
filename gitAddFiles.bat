@@ -16,8 +16,13 @@ git add tempix-03/.project
 git add tempix-03/ST/BSP/*
 git add tempix-03/tempixTerminal/*
 
+git add tempixActuator/*
+git add tempixActuator
+
 git add gitAddFiles.bat
 git add checkOriginMaster.bat
 git add .gitignore
+git add .metadata/*
+git add .metadata
 
 git status
