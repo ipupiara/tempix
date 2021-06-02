@@ -22,7 +22,5 @@ git add tempixActuator
 git add gitAddFiles.bat
 git add checkOriginMaster.bat
 git add .gitignore
-git add .metadata/*
-git add .metadata
 
 git status
