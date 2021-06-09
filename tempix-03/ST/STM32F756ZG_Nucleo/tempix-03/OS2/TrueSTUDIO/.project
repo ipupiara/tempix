@@ -97,6 +97,11 @@
 			<locationURI>virtual:/virtual</locationURI>
 		</link>
 		<link>
+			<name>ST/tempix-03/commonResources</name>
+			<type>2</type>
+			<locationURI>virtual:/virtual</locationURI>
+		</link>
+		<link>
 			<name>ST/tempix-03/tools</name>
 			<type>2</type>
 			<locationURI>virtual:/virtual</locationURI>
@@ -271,6 +276,64 @@
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/uosii-includes.h</locationURI>
 		</link>
+
+		<link>
+			<name>ST/tempix-03/tools/StateClass.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/StateClass.c</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/tools/StateClass.h</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/StateClass.h</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/tools/Tstatechart.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/Tstatechart.c</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/tools/Tstatechart.h</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/Tstatechart.h</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/tools/adcControl.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/adcControl.c</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/tools/adcControl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/adcControl.h</locationURI>
+		</link>
+
+
+		<link>
+			<name>ST/tempix-03/tools/canComms.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/canComms.c</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/tools/canComms.h</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/canComms.h</locationURI>
+		</link>
+
+
+		<link>
+			<name>ST/tempix-03/commonResources/canRelated.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/commonResources/canRelated.c</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/commonResources/canRelated.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/commonResources/canRelated.h</locationURI>
+		</link>
+
+
+
 		<link>
 			<name>ST/tempix-03/tools/dma-tools.c</name>
 			<type>1</type>
@@ -280,16 +343,6 @@
 			<name>ST/tempix-03/tools/dma-tools.h</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/dma-tools.h</locationURI>
-		</link>
-		<link>
-			<name>ST/tempix-03/tools/pidControl.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/pidControl.c</locationURI>
-		</link>
-		<link>
-			<name>ST/tempix-03/tools/pidControl.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/pidControl.h</locationURI>
 		</link>
 		<link>
 			<name>ST/tempix-03/tools/gpioSupport.c</name>
@@ -302,14 +355,24 @@
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/gpioSupport.h</locationURI>
 		</link>
 		<link>
-			<name>ST/tempix-03/tools/adcControl.c</name>
+			<name>ST/tempix-03/tools/i2c.c</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/adcControl.c</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/i2c.c</locationURI>
 		</link>
 		<link>
-			<name>ST/tempix-03/tools/adcControl.h</name>
+			<name>ST/tempix-03/tools/i2c.h</name>
 			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/adcControl.h</locationURI>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/i2c.h</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/tools/pidControl.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/pidControl.c</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/tools/pidControl.h</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/pidControl.h</locationURI>
 		</link>
 		<link>
 			<name>ST/tempix-03/tools/servoControl.c</name>
@@ -320,17 +383,7 @@
 			<name>ST/tempix-03/tools/servoControl.h</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/servoControl.h</locationURI>
-		</link>	
-		<link>
-			<name>ST/tempix-03/tools/canComms.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/canComms.c</locationURI>
 		</link>
-		<link>
-			<name>ST/tempix-03/tools/canComms.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/canComms.h</locationURI>
-		</link>	
 		<link>
 			<name>ST/tempix-03/tools/throttleActuator.c</name>
 			<type>1</type>
@@ -340,16 +393,6 @@
 			<name>ST/tempix-03/tools/throttleActuator.h</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/throttleActuator.h</locationURI>
-		</link>	
-		<link>
-			<name>ST/tempix-03/tools/i2c.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/i2c.c</locationURI>
-		</link>
-		<link>
-			<name>ST/tempix-03/tools/i2c.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/i2c.h</locationURI>
 		</link>
 		<link>
 			<name>ST/tempix-03/tools/uart-comms.c</name>
@@ -370,26 +413,6 @@
 			<name>ST/tempix-03/tools/uart-hw.h</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/uart-hw.h</locationURI>
-		</link>
-		<link>
-			<name>ST/tempix-03/tools/StateClass.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/StateClass.c</locationURI>
-		</link>
-		<link>
-			<name>ST/tempix-03/tools/StateClass.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/StateClass.h</locationURI>
-		</link>
-				<link>
-			<name>ST/tempix-03/tools/Tstatechart.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/Tstatechart.c</locationURI>
-		</link>
-		<link>
-			<name>ST/tempix-03/tools/Tstatechart.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/Tstatechart.h</locationURI>
 		</link>
 		<link>
 			<name>Micrium/Software/uC-CPU/ARM-Cortex-M/ARMv7-M</name>

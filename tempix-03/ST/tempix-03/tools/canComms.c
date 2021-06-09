@@ -3,6 +3,7 @@
 #include <servoControl.h>
 #include <pidControl.h>
 #include <stm32f7xx_hal_can.h>
+#include <stm32f7xx_hal_def.h>
 
 CAN_HandleTypeDef hcan1;
 
@@ -45,9 +46,15 @@ void sendSyncTempixCanMessage(uint32_t sId, TempixSimpleCommand scmd)
 }
 
 
-void dispatchCanMessage( CAN_RxHeaderTypeDef *pHeader, uint8_t aData[])
+__weak void dispatchCanMessage( CAN_RxHeaderTypeDef *pHeader, uint8_t aData[])
 {
+	/* Prevent unused argument(s) compilation warning */
+	UNUSED(&hcan1);
 
+	 /* NOTE : This function Should not be modified, when the callback is needed,
+	            the HAL_CAN_TxMailbox0CompleteCallback could be implemented in the
+	            user file
+	   */
 }
 
 void dispatchMsgOfFifo(uint32_t RxFifo)
@@ -335,12 +342,6 @@ void CAN1_SCE_IRQHandler(void)
 
 }
 
-
-
-void Install_Error_Handler()
-{
-	while(1) {}
-}
 
 
 void _CAN_Init(CAN_HandleTypeDef* hcan)
