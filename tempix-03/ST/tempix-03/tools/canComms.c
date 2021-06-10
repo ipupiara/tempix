@@ -220,9 +220,9 @@ void CAN1_RX1_IRQHandler(void)
 	CPU_CRITICAL_EXIT();
 
 	// Receive FIFO 0 message pending interrupt management
-	if ((interrupts & CAN_IT_RX_FIFO0_MSG_PENDING) != 0) {
+	if ((interrupts & CAN_IT_RX_FIFO1_MSG_PENDING) != 0) {
 		// Check if message is still pending
-		if ((hcan1.Instance->RF0R & CAN_RF0R_FMP0) != 0) {
+		if ((hcan1.Instance->RF1R & CAN_RF1R_FMP1) != 0) {
 			dispatchMsgOfFifo(CAN_RX_FIFO1);
 		}
 	}
@@ -364,6 +364,7 @@ void _CAN_Init(CAN_HandleTypeDef* hcan)
     HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
     /* CAN1 interrupt Init */
+
     HAL_NVIC_SetPriority(CAN1_TX_IRQn, 0, 0);
     HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);
     HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);

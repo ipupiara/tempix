@@ -4,7 +4,8 @@
 
 
 // lowest 11 bits allowed, ie.  Masked against  0000 07FF
-#define thottleActorCommandMessage   0x00000101
+#define controllerCommandMessage   0x00000101
+#define controllerPingMessage      0x00000121
 
 #define thottleActorStateMessage	 0x00000201
 #define thottleActorAlarmMessage	 0x00000210

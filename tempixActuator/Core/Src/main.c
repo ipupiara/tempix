@@ -40,7 +40,7 @@
 /* USER CODE END PM */
 
 /* Private variables ---------------------------------------------------------*/
-CAN_HandleTypeDef hcan;
+
 
 /* USER CODE BEGIN PV */
 
@@ -56,6 +56,11 @@ static void MX_CAN_Init(void);
 
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
+
+void Install_Error_Handler()
+{
+	while(1) {}
+}
 
 /* USER CODE END 0 */
 
@@ -146,6 +151,29 @@ void SystemClock_Config(void)
   * @param None
   * @retval None
   */
+
+void initCanFilters()
+{
+	HAL_StatusTypeDef  initState;
+	CAN_FilterTypeDef  filterTypeDef;
+	filterTypeDef.FilterScale = CAN_FILTERSCALE_16BIT;
+	filterTypeDef.FilterMode = CAN_FILTERMODE_IDMASK;
+	filterTypeDef.FilterIdHigh = 0x0100;   // 0x0100 on receiver side
+	filterTypeDef.FilterMaskIdHigh =  0x0700;
+	filterTypeDef.FilterIdLow  = 0x07FF;
+	filterTypeDef.FilterMaskIdLow =	0x07FF;
+	filterTypeDef.FilterBank = 0;
+	filterTypeDef.SlaveStartFilterBank = 1;
+	filterTypeDef.FilterFIFOAssignment = CAN_FILTER_FIFO0;
+	initState = HAL_CAN_ConfigFilter(&hcan, &filterTypeDef);
+	if (initState != HAL_OK) {
+		Install_Error_Handler();
+	}
+}
+
+
+
+
 static void MX_CAN_Init(void)
 {
 
@@ -173,6 +201,27 @@ static void MX_CAN_Init(void)
     Error_Handler();
   }
   /* USER CODE BEGIN CAN_Init 2 */
+
+  HAL_NVIC_SetPriority(CAN1_TX_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);
+  HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
+  HAL_NVIC_SetPriority(CAN1_RX1_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);
+  HAL_NVIC_SetPriority(CAN1_SCE_IRQn, 0, 0);
+  HAL_NVIC_EnableIRQ(CAN1_SCE_IRQn);
+
+  __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_TMEIE);
+
+  __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_FMPIE0);
+  __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_FMPIE1);
+
+  __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_ERRIE);
+
+  __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_EWGIE);
+  __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_EPVIE);
+  __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_BOFIE);
+  __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_LECIE);
 
   /* USER CODE END CAN_Init 2 */
 
