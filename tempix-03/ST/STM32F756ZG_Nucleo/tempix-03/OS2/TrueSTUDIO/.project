@@ -324,12 +324,12 @@
 		<link>
 			<name>ST/tempix-03/commonResources/canRelated.c</name>
 			<type>1</type>
-			<locationURI>WORKSPACE_LOC/commonResources/canRelated.c</locationURI>
+			<locationURI>WORKSPACE_LOC/tempixActuator/commonResources/canRelated.c</locationURI>
 		</link>
 		<link>
 			<name>ST/tempix-03/commonResources/canRelated.h</name>
 			<type>1</type>
-			<locationURI>WORKSPACE_LOC/commonResources/canRelated.h</locationURI>
+			<locationURI>WORKSPACE_LOC/tempixActuator/commonResources/canRelated.h</locationURI>
 		</link>
 
 

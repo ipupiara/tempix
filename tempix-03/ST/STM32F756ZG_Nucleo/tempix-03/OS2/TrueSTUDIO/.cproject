@@ -59,7 +59,7 @@
 									<listOptionValue builtIn="false" value="../../../../../../Micrium/Software/uCOS-II"/>
 									<listOptionValue builtIn="false" value="../../../../../../Micrium/Software/uCOS-II/Source"/>
 									<listOptionValue builtIn="false" value="../../../../../../Micrium/Software/uCOS-II/Ports/ARM-Cortex-M/ARMv7-M/GNU"/>
-									<listOptionValue builtIn="false" value="../../../../../../../commonResources"/>
+									<listOptionValue builtIn="false" value="../../../../../../../tempixActuator/commonResources"/>
 									<listOptionValue builtIn="false" value="../../../../../tempix-03/tools"/>
 								</option>
 								<option id="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.ffunction.2021332324" name="Place functions in their own sections (-ffunction-sections)" superClass="com.st.stm32cube.ide.mcu.gnu.managedbuild.tool.c.compiler.option.ffunction" useByScannerDiscovery="false" value="true" valueType="boolean"/>

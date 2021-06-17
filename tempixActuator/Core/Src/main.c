@@ -19,6 +19,8 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
+#include "canRelated.h"
+
 
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
@@ -57,10 +59,10 @@ static void MX_CAN_Init(void);
 /* Private user code ---------------------------------------------------------*/
 /* USER CODE BEGIN 0 */
 
-void Install_Error_Handler()
-{
-	while(1) {}
-}
+//void Install_Error_Handler()
+//{
+//	while(1) {}
+//}
 
 /* USER CODE END 0 */
 

@@ -20,7 +20,7 @@
 
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "stm32f1xx_it.h"
+#include <canRelated.h>
 /* Private includes ----------------------------------------------------------*/
 /* USER CODE BEGIN Includes */
 /* USER CODE END Includes */
@@ -258,7 +258,6 @@ void USB_HP_CAN1_TX_IRQHandler(void)
 	}
 }
 
-
 __weak void dispatchCanMessage( CAN_RxHeaderTypeDef *pHeader, uint8_t aData[])
 {
 	/* Prevent unused argument(s) compilation warning */
@@ -281,6 +280,7 @@ void dispatchMsgOfFifo(uint32_t RxFifo)
 		// handle some Error
 	}
 }
+
 
 
 /**

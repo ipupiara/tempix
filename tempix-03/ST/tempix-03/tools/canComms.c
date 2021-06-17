@@ -14,19 +14,14 @@ CAN_HandleTypeDef hcan1;
 
 OS_EVENT *canQSem;
 
-uint8_t sendCanMessage( uint32_t stdID, uint8_t aData[])
+
+
+uint8_t syncSendTempixSimpleCommand(uint32_t sId, TempixSimpleCommand scmd)
 {
-	uint32_t transmitmailbox;
-	CAN_TxHeaderTypeDef header;
 	uint8_t err = 1;
 	OSSemPend(canQSem, 0, &err);
 	if (err == OS_ERR_NONE ) {
-		memset(&header,0x00,sizeof(header));
-		header.StdId= stdID;
-		header.IDE = CAN_ID_STD;
-		header.DLC = 8;
-		header.RTR = CAN_RTR_DATA;
-		if ( HAL_CAN_AddTxMessage(&hcan1, &header, aData, &transmitmailbox) == HAL_OK) {
+		if ( sendCanTempixSimpleCommand(&hcan1, sId, scmd) == 1) {
 			err = 0;
 		}
 		OSSemPost(canQSem);
@@ -37,19 +32,11 @@ uint8_t sendCanMessage( uint32_t stdID, uint8_t aData[])
 }
 
 
-void sendSyncTempixCanMessage(uint32_t sId, TempixSimpleCommand scmd)
-{
-	uint8_t msgData[8];
-	memcpy(msgData,&scmd.commandType,4);
-	memcpy(&msgData[4],&scmd.commandData,4);
-	sendCanMessage(sId, msgData);
-}
 
-
-__weak void dispatchCanMessage( CAN_RxHeaderTypeDef *pHeader, uint8_t aData[])
+void dispatchCanMessage( CAN_RxHeaderTypeDef *pHeader, uint8_t aData[])
 {
 	/* Prevent unused argument(s) compilation warning */
-	UNUSED(&hcan1);
+//	UNUSED(&hcan1);
 
 	 /* NOTE : This function Should not be modified, when the callback is needed,
 	            the HAL_CAN_TxMailbox0CompleteCallback could be implemented in the

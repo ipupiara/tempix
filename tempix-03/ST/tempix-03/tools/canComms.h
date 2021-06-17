@@ -7,6 +7,6 @@
 void initCanComms();
 
 
-void sendSyncTempixCanMessage(uint32_t sId, TempixSimpleCommand scmd);
+uint8_t syncSendTempixSimpleCommand(uint32_t sId, TempixSimpleCommand scmd);
 
 #endif
