@@ -359,8 +359,8 @@ void uart_DMA_Init(void)
 	    clearDmaInterruptFlags(&hdma_usart1_tx);
 	    enableAllDmaInterrupts(&hdma_usart1_tx,withoutHT);
 
-	    BSP_IntVectSet (DMA2_Stream2_IRQn,7,CPU_INT_KA,DMA2_Stream2_IRQHandler);
-	    BSP_IntVectSet (DMA2_Stream7_IRQn,7,CPU_INT_KA,DMA2_Stream7_IRQHandler);
+	    BSP_IntVectSet (DMA2_Stream2_IRQn,tempixIsrPrio,CPU_INT_KA,DMA2_Stream2_IRQHandler);
+	    BSP_IntVectSet (DMA2_Stream7_IRQn,tempixIsrPrio,CPU_INT_KA,DMA2_Stream7_IRQHandler);
 }
 
 void startCircReceiver()
@@ -420,8 +420,8 @@ INT8U initUartHw()
 //		  huart1.Instance->CR1 |= USART_CR1_TCIE_Msk;
 
 
-		  HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
-		  BSP_IntVectSet (USART1_IRQn,9,CPU_INT_KA,USART1_IRQHandler);
+		  //HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+		  BSP_IntVectSet (USART1_IRQn,tempixIsrPrio,CPU_INT_KA,USART1_IRQHandler);
 
 		  uart_DMA_Init();
 

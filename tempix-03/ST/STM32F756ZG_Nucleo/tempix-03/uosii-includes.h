@@ -1,7 +1,8 @@
 #ifndef asdfdgdreuosii_includes_h
 #define asdfdgdreuosii_includes_h
 
-//#define HAL_USART_MODULE_ENABLED
+#define  tempixIsrPrio    0
+
 
 #include  <stm32f7xx_hal.h>
 

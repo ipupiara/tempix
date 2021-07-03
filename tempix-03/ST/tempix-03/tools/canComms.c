@@ -352,13 +352,13 @@ void _CAN_Init(CAN_HandleTypeDef* hcan)
 
     /* CAN1 interrupt Init */
 
-    HAL_NVIC_SetPriority(CAN1_TX_IRQn, 0, 0);
+    BSP_IntVectSet(CAN1_TX_IRQn,tempixIsrPrio ,CPU_INT_KA,CAN1_TX_IRQHandler);
     HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);
-    HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
+    BSP_IntVectSet(CAN1_RX0_IRQn,tempixIsrPrio ,CPU_INT_KA,CAN1_RX0_IRQHandler);
     HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
-    HAL_NVIC_SetPriority(CAN1_RX1_IRQn, 0, 0);
+    BSP_IntVectSet(CAN1_RX1_IRQn,tempixIsrPrio,CPU_INT_KA,CAN1_RX1_IRQHandler);
     HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);
-    HAL_NVIC_SetPriority(CAN1_SCE_IRQn, 0, 0);
+    BSP_IntVectSet(CAN1_SCE_IRQn,tempixIsrPrio ,CPU_INT_KA,CAN1_SCE_IRQHandler);
     HAL_NVIC_EnableIRQ(CAN1_SCE_IRQn);
 
     __HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_TMEIE);
