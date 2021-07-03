@@ -377,8 +377,8 @@ INT8U initI2c()
   {
 	  i2cError(0x89);
   }
-  BSP_IntVectSet (I2C1_EV_IRQn,tempixIsrPrio,CPU_INT_KA,I2C1_EV_IRQHandler);
-  BSP_IntVectSet (I2C1_ER_IRQn,tempixIsrPrio,CPU_INT_KA,I2C1_ER_IRQHandler);
+  BSP_IntVectSet (I2C1_EV_IRQn,tempixIsrPrioLevel,CPU_INT_KA,I2C1_EV_IRQHandler);
+  BSP_IntVectSet (I2C1_ER_IRQn,tempixIsrPrioLevel,CPU_INT_KA,I2C1_ER_IRQHandler);
   __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_ERRI | I2C_IT_TCI));
   __HAL_I2C_AutoEndENABLE(&hi2c1);
 #ifdef i2cUseDma
@@ -387,7 +387,7 @@ INT8U initI2c()
   __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_RXI | I2C_IT_TXI));
 #endif
 
-  return err; // todo error return does not really make sense.....
+  return err; // error return does not really make sense.....
 }
 
 void startI2c()

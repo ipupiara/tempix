@@ -217,8 +217,7 @@
 *               aware while priorities 0-3 will be use as non-kernel aware.
 *********************************************************************************************************
 */
-//  todo check this with manuals and coded priorities in application towards cli and sei (MRS CPS asm instructions)
-//  problematics and processor preemption handling...   :-)
+
 #define  CPU_CFG_KA_IPL_BOUNDARY                           4u
 
 

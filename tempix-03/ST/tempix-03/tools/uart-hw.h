@@ -17,8 +17,6 @@ OS_EVENT *dmaQSem;
 
 INT8U initUartHw();
 
-void deInitUart();
-
 INT8U startUartHw();
 
 INT8U sendUartString(char* sndStr);

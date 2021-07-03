@@ -72,7 +72,7 @@ static  void  SerialQMethod (void *p_arg)
 					 err = OSMemPut(serialMsgMem, (void *)sm);
 				 } else {
 					 if ((err == OS_ERR_TIMEOUT))
-					 {   // TODO check ready to send string, but sema accidentally not set, recover situation
+					 {
 
 					 }
 				 }
@@ -208,14 +208,8 @@ void  err_printf ( char *emsg, ...)
 
 void forwardReceivedStringBuffer(char* strBuffer)
 {
-/*	INT8U cmpRes = strcmp(strBuffer,"@ping:");
-	INT8U cmpBuf[10];
-	memset(cmpBuf,0x00,sizeof(cmpBuf));
-	strncpy((char*)cmpBuf,strBuffer,6);
-	cmpRes = strcmp((const char*)cmpBuf,"@ping:");
-	cmpRes = strncmp(strBuffer,"@ping:",6);  */
 	if (strlen(strBuffer) > 4) {
-		if (strncmp(strBuffer,"@ping:",6) == 0) {   //  TODO warning tobe tested  is & op needed?
+		if (strncmp(strBuffer,"@ping:",6) == 0) {
 			info_printf("tempixController ping received: %s \n",strBuffer);
 		}  else {
 			info_printf("tempixController received unknown String %s\n",strBuffer);

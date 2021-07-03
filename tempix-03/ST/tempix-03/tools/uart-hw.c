@@ -20,7 +20,7 @@
  *
 */
 
-UART_HandleTypeDef huart1;      // TODO check against micrium if uart1 is ok
+UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_tx;
 DMA_HandleTypeDef hdma_usart1_rx;
 
@@ -113,18 +113,14 @@ void resetDmaBuffer()
 void transferBuffer(INT8U  tobeForwardedFrom)
 {
 	bufferCounterType newNdtr= (INT32U)  (hdma_usart1_rx.Instance->NDTR);
-	INT8U dummyInt;
 	bufferCounterType amtRcvd;
-	if (tobeForwardedFrom == fromUartIsr)  {
-			// TODO  look how come in the values
-		dummyInt = 0;
-	}
+
 	if (tobeForwardedFrom == fromTransferCompleteIsr)  {
-		amtRcvd = lastNdtr;
+		amtRcvd = lastNdtr;     // newNdtr already set  to buffer size
 	}  else {
 		amtRcvd =   lastNdtr  - newNdtr;
 	}
-	// is lastNdtr on TC already 0 ???
+
 	INT8U receivedAt = fullDmaRxBufferSize - lastNdtr;
 
 	bufferCounterType amtCpy = amtRcvd;
@@ -158,9 +154,6 @@ void transferBuffer(INT8U  tobeForwardedFrom)
 			resetStringBuffer();
 		}
 	}
-	if (dummyInt > 0xf0) {
-		info_printf("should  never come here\n");
-	}
 }
 
 
@@ -181,11 +174,6 @@ static void USART1_IRQHandler(void)
     	__HAL_UART_CLEAR_IT(&huart1,USART_ICR_TCCF_Msk);
     }
 
-     //  TODO debug the one below and check that it performs only what needed, evtl. extract and move needed instruction to here
- //    HAL_UART_IRQHandler(&huart1);  // default method of mx help nothing here.
-
-//  todo reset isr (TC, TXE and) IDLE flag. eventually disable idle interrupt until next start sending
-
      /* --------------- HANDLER YOUR ISR HERE --------------- */
      if (idleDetected == 1)   {
 		CPU_SR_ALLOC();
@@ -194,18 +182,9 @@ static void USART1_IRQHandler(void)
 		 OSIntEnter();           /* Tell OS that we are starting an ISR           */
 		 CPU_CRITICAL_EXIT();
 
-	     	//  copy rest of data to receive buffer and signal receit event
-	    	transferBuffer(fromUartIsr);   //  TODO check concurrency behaviour with dma interrupt !!!
-	    						//  is idle delay ok?
-	    	//  handle string over to uartReceiveHandler  (thread)
-	    	//  evtl. better copy to new variable, so a next one can be read in, if handling is done async
-	    	//  handle async data with accesscounter odd/even for simplicity reason
-	    	//amtWrittenStringChars = 0; // reset string for next read from uart
-
-
+	    	transferBuffer(fromUartIsr);
 
 		 OSIntExit();
-		 //  todo check eie (error interrupt enabled) and enable in cr
      }
 }
 
@@ -295,7 +274,7 @@ void usart1_GPIO_Init(void)
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
   /* GPIO Ports Clock Enable */
-  __HAL_RCC_GPIOH_CLK_ENABLE();  // todo check if this is needed
+  __HAL_RCC_GPIOH_CLK_ENABLE();
   __HAL_RCC_GPIOA_CLK_ENABLE();
 
 
@@ -359,8 +338,8 @@ void uart_DMA_Init(void)
 	    clearDmaInterruptFlags(&hdma_usart1_tx);
 	    enableAllDmaInterrupts(&hdma_usart1_tx,withoutHT);
 
-	    BSP_IntVectSet (DMA2_Stream2_IRQn,tempixIsrPrio,CPU_INT_KA,DMA2_Stream2_IRQHandler);
-	    BSP_IntVectSet (DMA2_Stream7_IRQn,tempixIsrPrio,CPU_INT_KA,DMA2_Stream7_IRQHandler);
+	    BSP_IntVectSet (DMA2_Stream2_IRQn,tempixIsrPrioLevel,CPU_INT_KA,DMA2_Stream2_IRQHandler);
+	    BSP_IntVectSet (DMA2_Stream7_IRQn,tempixIsrPrioLevel,CPU_INT_KA,DMA2_Stream7_IRQHandler);
 }
 
 void startCircReceiver()
@@ -394,11 +373,7 @@ INT8U initUartHw()
 	if (res == OS_ERR_NONE)
 	{
 
-		usart1_GPIO_Init();   //  need gpio clock for uart
-
-
-		//  TODO  check that all  needed clocks run, else start here in first place
-		//        check settings are ok with uosii
+		usart1_GPIO_Init();
 
 		  huart1.Instance = USART1;
 		  huart1.Init.BaudRate = 9600;
@@ -420,8 +395,8 @@ INT8U initUartHw()
 //		  huart1.Instance->CR1 |= USART_CR1_TCIE_Msk;
 
 
-		  //HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
-		  BSP_IntVectSet (USART1_IRQn,tempixIsrPrio,CPU_INT_KA,USART1_IRQHandler);
+		  HAL_NVIC_SetPriority(USART1_IRQn, 0, 0);
+		  BSP_IntVectSet (USART1_IRQn,tempixIsrPrioLevel,CPU_INT_KA,USART1_IRQHandler);
 
 		  uart_DMA_Init();
 
@@ -466,12 +441,6 @@ INT8U disableUartInterrupts()
 	return res;
 }
 
-void deInitUart()
-{
-	disableUartInterrupts();
-	//  TODO add disable, clock shutdown ....
-}
-
 INT8U sendUartString(char* sndStr)
 {
 	INT8U res = 0;
@@ -479,11 +448,8 @@ INT8U sendUartString(char* sndStr)
 //	commsError = 0;
 
 	DMA_SetTransferConfig(&hdma_usart1_tx, (uint32_t)sndStr, (uint32_t)&huart1.Instance->TDR, strlen(sndStr));
-
 	clearDmaInterruptFlags(&hdma_usart1_tx);
-
 	__HAL_DMA_ENABLE(&hdma_usart1_tx);
 
-	// TODO wait until buffer is sent since the caller expects a sysnchronous method
 	return res;
 }

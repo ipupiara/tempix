@@ -1,7 +1,7 @@
 #ifndef asdfdgdreuosii_includes_h
 #define asdfdgdreuosii_includes_h
 
-#define  tempixIsrPrio    0
+#define  tempixIsrPrioLevel    0x04UL
 
 
 #include  <stm32f7xx_hal.h>

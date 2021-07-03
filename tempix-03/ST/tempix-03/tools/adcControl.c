@@ -164,7 +164,7 @@ static void MX_ADC2_throttlePoti_Init(void)
 
   }
 
-  BSP_IntVectSet(ADC_IRQn,tempixIsrPrio,CPU_INT_KA,ADC_IRQHandler);
+  BSP_IntVectSet(ADC_IRQn,tempixIsrPrioLevel,CPU_INT_KA,ADC_IRQHandler);
   BSP_IntEnable(ADC_IRQn);
   __HAL_ADC_ENABLE_IT(&currentSensorADC,ADC_IT_AWD);
   __HAL_ADC_ENABLE_IT(&throttlePotiADC,ADC_IT_EOC);

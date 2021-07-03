@@ -80,8 +80,6 @@ void EXTI4_IRQHandler(void)    //  on_off_Pin
 	}
 }
 
-
-//  todo make sure exti9_5 and tim5 do net preempt (see also isr priority settings)
 void EXTI9_5_IRQHandler(void)   //  speedometer_Pin
 {
 	INT32U spd;
@@ -148,27 +146,25 @@ static void MX_GPIO_Init(void)
   HAL_GPIO_Init(speedometer_GPIO_Port, &GPIO_InitStruct);
 
   /* EXTI interrupt init*/
-  BSP_IntVectSet (clutchBreak_EXTI_IRQn,tempixIsrPrio,CPU_INT_KA,EXTI1_IRQHandler);
+  BSP_IntVectSet (clutchBreak_EXTI_IRQn,tempixIsrPrioLevel,CPU_INT_KA,EXTI1_IRQHandler);
   BSP_IntEnable(clutchBreak_EXTI_IRQn);
   __HAL_GPIO_EXTI_ENABLE_IT(clutchBreak_Pin);
 
-  BSP_IntVectSet (set_acc_EXTI_IRQn,tempixIsrPrio,CPU_INT_KA,EXTI2_IRQHandler);
+  BSP_IntVectSet (set_acc_EXTI_IRQn,tempixIsrPrioLevel,CPU_INT_KA,EXTI2_IRQHandler);
   BSP_IntEnable(set_acc_EXTI_IRQn);
   __HAL_GPIO_EXTI_ENABLE_IT(set_acc_Pin);
 
-  BSP_IntVectSet (res_dec_EXTI_IRQn,tempixIsrPrio,CPU_INT_KA,EXTI3_IRQHandler);
+  BSP_IntVectSet (res_dec_EXTI_IRQn,tempixIsrPrioLevel,CPU_INT_KA,EXTI3_IRQHandler);
   BSP_IntEnable(res_dec_EXTI_IRQn);
   __HAL_GPIO_EXTI_ENABLE_IT(res_dec_Pin);
 
-  BSP_IntVectSet (on_off_EXTI_IRQn,tempixIsrPrio,CPU_INT_KA,EXTI4_IRQHandler);
+  BSP_IntVectSet (on_off_EXTI_IRQn,tempixIsrPrioLevel,CPU_INT_KA,EXTI4_IRQHandler);
   BSP_IntEnable(on_off_EXTI_IRQn);
   __HAL_GPIO_EXTI_ENABLE_IT(on_off_Pin);
 
-  BSP_IntVectSet (speedometer_EXTI_IRQn,tempixIsrPrio,CPU_INT_KA,EXTI9_5_IRQHandler);
+  BSP_IntVectSet (speedometer_EXTI_IRQn,tempixIsrPrioLevel,CPU_INT_KA,EXTI9_5_IRQHandler);
   BSP_IntEnable(speedometer_EXTI_IRQn);
   __HAL_GPIO_EXTI_ENABLE_IT(speedometer_Pin);
-
-  // todo set above interrupt prio enable to uos- methods  and finetune prios / preemption  for the whole application
 
 }
 
@@ -205,7 +201,7 @@ static void MX_TIM5_Init(void)
   if (HAL_TIMEx_MasterConfigSynchronization(&htim5, &sMasterConfig) != HAL_OK) {
 
   }
-  BSP_IntVectSet (TIM5_IRQn,tempixIsrPrio,CPU_INT_KA,TIM5_IRQHandler);
+  BSP_IntVectSet (TIM5_IRQn,tempixIsrPrioLevel,CPU_INT_KA,TIM5_IRQHandler);
   BSP_IntEnable(TIM5_IRQn);
   __HAL_TIM_ENABLE_IT(&htim5,TIM_IT_UPDATE);
   __HAL_TIM_URS_ENABLE(&htim5);   //  only overflow as updatte event

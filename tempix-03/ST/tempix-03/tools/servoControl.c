@@ -67,14 +67,7 @@ INT32U getThrottlePosition()
 }
 
 INT32U  getDesiredSpeedInv()
-{     //  todo tobe tested against privileged - none privileged levels (see also programming manual
-	  //  maybe better use OS methods instead
-/*
-			see also   https://www.iotality.com/armcm-access-levels/      & co. (blog)
-			https://www.micrium.com/building-advanced-cortex-m3-applications/    and blogs
-			cmsis_gcc.h  in cmsis/Include/      methods enable/disable irq, access Control Register
-
-*/
+{
 	CPU_SR_ALLOC();
 	INT32U speed;
 	CPU_CRITICAL_ENTER();

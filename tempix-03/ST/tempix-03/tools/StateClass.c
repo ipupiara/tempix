@@ -194,7 +194,6 @@ uStInt evTempixOffChecker(void)
 
 void entryTempixOff(void)
 {
-//  todo check if it is legal to 	change state in entry state of a leaf state ???   (pn,8-mar-2021: should be, but I am not sure)
 	if (! areAllErrorsResolved()) {
 		postTempixEvent(evErrorDetected);
 	} else if (isTempixSwitchedOn()) {
