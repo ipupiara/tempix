@@ -11,6 +11,7 @@
 #include <pidControl.h>
 #include <gpioSupport.h>
 #include <servoControl.h>
+#include <i2c.h>
 
 extern const uStInt uStIntHandlingDone;
 extern const uStInt uStIntNoMatch;
@@ -77,12 +78,14 @@ void postTempixEvent(INT8U ev)
 
 		if ((fm->evType == evErrorDetected) || (fm->evType == evFatalError)) {
 			err = OSQPostFront(fsmEventQ, (void *)fm);
-		}  else  {
-			err = OSQPost(fsmEventQ, (void *)fm);
 		}
-	} else if ((fm->evType == evErrorDetected) || (fm->evType == evFatalError)) {
-		err = OSQFlush(fsmEventQ);
-		if (err == OS_ERR_NONE) {
+		else if ((fm->evType == evErrorDetected) || (fm->evType == evFatalError)) {
+			err = OSQFlush(fsmEventQ);
+			if (err == OS_ERR_NONE) {
+				err = OSQPost(fsmEventQ, (void *)fm);
+			}
+		}
+		else  {
 			err = OSQPost(fsmEventQ, (void *)fm);
 		}
 	} //  else cant do much, mostly called from any isr, ev blink an alarm
@@ -158,7 +161,15 @@ void prepareFsmUosMethod()
 
 uStInt evTempixStateChartChecker(void)
 {
-	return (uStIntNoMatch);
+	uStInt res = uStIntNoMatch;
+	if (currentTempixEvent->evType   == evI2CResetNeeded) {
+		OSTimeDlyHMSM(0, 0, 0, 2);
+		// give it some time (1-2 ms) for a hw reset (no big delay for this fsm)
+		initI2c();
+		res =  uStIntHandlingDone;
+	}
+
+	return res;
 }
 
 void entryTempixStateChart(void)

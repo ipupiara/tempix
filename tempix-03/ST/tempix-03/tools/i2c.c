@@ -3,6 +3,7 @@
 #include <i2c.h>
 #include <dma-tools.h>
 #include <uosii-includes.h>
+#include <StateClass.h>
 
 #define  MAX( a, b ) ( ( a > b) ? a : b )
 
@@ -17,6 +18,8 @@ OS_EVENT *i2cJobSem;
 I2C_HandleTypeDef hi2c1;
 
 //OS_STK  i2cMethodStk[APP_CFG_DEFAULT_TASK_STK_SIZE];
+
+void reInitOnError();
 
 typedef enum  {
 	sendI2c = 0,
@@ -48,6 +51,10 @@ static void i2cSendStart(I2C_HandleTypeDef *hi2c)
 	WRITE_REG(hi2c->Instance->CR2, ((uint32_t)1U << I2C_CR2_START_Pos));
 }
 
+static void i2cSendStop(I2C_HandleTypeDef *hi2c)
+{
+	WRITE_REG(hi2c->Instance->CR2, ((uint32_t)1U << I2C_CR2_STOP_Pos));
+}
 
 
 void i2cFinished()
@@ -264,6 +271,12 @@ void I2C1_EV_IRQHandler(void)
 
 void I2C1_ER_IRQHandler(void)
 {
+	CPU_SR_ALLOC();
+//	INT8U err = OS_ERR_NONE;
+
+	CPU_CRITICAL_ENTER();
+	OSIntEnter();           /* Tell OS that we are starting an ISR           */
+	CPU_CRITICAL_EXIT();
 	// copied from stm32f7xx_hal_i2d.c
 	uint32_t itflags   = READ_REG(hi2c1.Instance->ISR);
 	uint32_t itsources = READ_REG(hi2c1.Instance->CR1);
@@ -285,6 +298,12 @@ void I2C1_ER_IRQHandler(void)
 	    __HAL_I2C_CLEAR_FLAG(&hi2c1, I2C_FLAG_ARLO);
 	  }
 	i2cError(0x82);  //  todo implement refined error message with above details....
+
+	CPU_CRITICAL_ENTER();
+	reInitOnError();
+	CPU_CRITICAL_EXIT();
+
+	OSIntExit();
 }
 
 INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U doSend)
@@ -395,4 +414,8 @@ void startI2c()
 	 __HAL_I2C_ENABLE(&hi2c1);
 }
 
-
+void reInitOnError()
+{   //  needs tobe kernel aware  !
+	i2cSendStop(&hi2c1);
+	postTempixEvent(evI2CResetNeeded);  //  implemented on statemachine (for a short delay)
+}
