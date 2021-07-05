@@ -24,14 +24,14 @@ enum  eEventTypes
 INT8U   workingTimerActive;
 
 typedef struct  {
-	int evType;
+	uint8_t evType;
 	union {
-		int8_t keyCode;
+		uint8_t keyCode;
 		struct {			// currently not in use
 
 		} zeroAdjustingState;
+		INT8U dummyFiller [10]; // needed for messageQueue
 	}  evData;
-	INT8U dummyFiller [10]; // needed for messageQueue
 } CTempixEvent ;
 
 

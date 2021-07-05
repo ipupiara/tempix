@@ -515,6 +515,11 @@
 			<locationURI>PARENT-1-PROJECT_LOC/main.c</locationURI>
 		</link>
 		<link>
+			<name>ST/STM32F756ZG_Nucleo/tempix-03/OS2/main.h</name>
+			<type>1</type>
+			<locationURI>PARENT-1-PROJECT_LOC/main.h</locationURI>
+		</link>
+		<link>
 			<name>ST/STM32F756ZG_Nucleo/tempix-03/OS2/os_cfg.h</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/os_cfg.h</locationURI>

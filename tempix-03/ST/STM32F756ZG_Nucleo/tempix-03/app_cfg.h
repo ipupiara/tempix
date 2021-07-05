@@ -62,7 +62,8 @@
 
 #define  OS_TASK_TMR_PRIO                (OS_LOWEST_PRIO - 2u)  /* Only required for uC/OS-II                           */
 
-#define  APP_CFG_STARTUP_TASK_PRIO                         3u
+#define  APP_CFG_STARTUP_TASK_PRIO        (OS_LOWEST_PRIO - 3u)    /*our internally initialize and
+																	async eventQTask  */
 
 
 /*

@@ -12,6 +12,7 @@ INT8U receiveI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars);
 
 
 INT8U initI2c();
-void startI2c();
+void reInitI2cAfterError();
+void enableI2c();
 
 #endif

@@ -55,7 +55,7 @@ void  uart_dmaError_handler(DMA_HandleTypeDef *hdma)
 #define halfDmaRxBufferSize   0x20
 #define fullDmaRxBufferSize 2 * halfDmaRxBufferSize
 #define endBufferPosition ( fullDmaRxBufferSize - 1 )
-#define maxDmaStringSize  0x80
+
 
 #define debugArraySize 0xFF
 INT8U  debugArray [debugArraySize];
@@ -77,7 +77,7 @@ void addToDebugArray(INT8U from,INT8U val)
 }
 
 
-INT8U  receiveStringBuffer  [maxDmaStringSize + 1];
+INT8U  receiveStringBuffer  [maxUartReceiveDmaStringSize + 1];
 
 typedef struct
 {
@@ -126,9 +126,9 @@ void transferBuffer(INT8U  tobeForwardedFrom)
 	bufferCounterType amtCpy = amtRcvd;
 	// evtl if inTc ndtr might already be reset ??
 
-	if (amtWrittenStringChars < maxDmaStringSize )  {
-		if (amtWrittenStringChars + amtRcvd > maxDmaStringSize) {
-			amtCpy = maxDmaStringSize  - amtWrittenStringChars;
+	if (amtWrittenStringChars < maxUartReceiveDmaStringSize )  {
+		if (amtWrittenStringChars + amtRcvd > maxUartReceiveDmaStringSize) {
+			amtCpy = maxUartReceiveDmaStringSize  - amtWrittenStringChars;
 		}
 	} else {
 		amtCpy = 0;

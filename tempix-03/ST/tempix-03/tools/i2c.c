@@ -38,6 +38,8 @@ typedef struct
 
 i2cJobDataType i2cJobData;
 INT8U  i2cErr;
+uint8_t i2cInitialized;
+
 
 static void i2cTransferConfig(I2C_HandleTypeDef *hi2c,  uint16_t DevAddress, uint8_t Size,  uint8_t Request)
 {
@@ -309,32 +311,35 @@ void I2C1_ER_IRQHandler(void)
 INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U doSend)
 {
 	INT8U semErr;
-	OSSemPend(i2cResourceSem, 2803, &semErr);
-	if (semErr == OS_ERR_NONE) {
-		i2cErr = OS_ERR_NONE;
-		OSSemSet(i2cJobSem,0,&semErr);  // be sure it was not set multiple times at last end of transfer..
-		i2cJobData.buffer = pResultString;
-		i2cJobData.amtChars = amtChars;
-		i2cJobData.bufferCnt = 0;
-		i2cJobData.address = adr;
-		if (doSend == 1) {
-			i2cJobData.jobType = sendI2c;
-		} else {
-			i2cJobData.jobType = receiveI2c;
-			memset(pResultString,0,amtChars);  // todo check if this work correct (not content of pointer variable is changed)
-		}
+	uint8_t res = 0xFF;
+	if (i2cInitialized == 1) {
+		OSSemPend(i2cResourceSem, 2803, &semErr);
+		if (semErr == OS_ERR_NONE) {
+			i2cErr = OS_ERR_NONE;
+			OSSemSet(i2cJobSem,0,&semErr);  // be sure it was not set multiple times at last end of transfer..
+			i2cJobData.buffer = pResultString;
+			i2cJobData.amtChars = amtChars;
+			i2cJobData.bufferCnt = 0;
+			i2cJobData.address = adr;
+			if (doSend == 1) {
+				i2cJobData.jobType = sendI2c;
+			} else {
+				i2cJobData.jobType = receiveI2c;
+				memset(pResultString,0,amtChars);  // todo check if this work correct (not content of pointer variable is changed)
+			}
+			establishContactAndRun();
 
-		establishContactAndRun();
-
-		OSSemPend(i2cJobSem, 0, &semErr);
-		if (semErr != OS_ERR_NONE) {
- 			i2cErr = semErr;
+			OSSemPend(i2cJobSem, 0, &semErr);
+			if (semErr != OS_ERR_NONE) {
+				i2cErr = semErr;
+			}
+			OSSemSet(i2cResourceSem, 1, &semErr);
+			res = i2cErr;
+		}  else {
+			res = semErr;
 		}
-		OSSemSet(i2cResourceSem, 1, &semErr);
-		return i2cErr;
-	}  else {
-		return semErr;
 	}
+	return res;
 }
 
 INT8U sendI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars)
@@ -349,6 +354,8 @@ INT8U receiveI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars)
 
 INT8U initI2c()
 {
+
+	i2cInitialized = 0;
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
 	INT8U err = OS_ERR_NONE;
@@ -406,16 +413,34 @@ INT8U initI2c()
   __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_RXI | I2C_IT_TXI));
 #endif
 
+  i2cInitialized = 1;
   return err; // error return does not really make sense.....
 }
 
-void startI2c()
+void enableI2c()
 {
 	 __HAL_I2C_ENABLE(&hi2c1);
 }
 
+void disableI2c()
+{
+	__HAL_I2C_DISABLE(&hi2c1);
+}
+
+void reInitI2cAfterError()
+{
+	INT8U err = OS_ERR_NONE;
+	OSSemDel(i2cJobSem, OS_DEL_ALWAYS, &err);
+	OSSemDel(i2cResourceSem, OS_DEL_ALWAYS, &err);
+	initI2c();
+}
+
+
 void reInitOnError()
 {   //  needs tobe kernel aware  !
+
+	i2cInitialized = 0;
 	i2cSendStop(&hi2c1);
-	postTempixEvent(evI2CResetNeeded);  //  implemented on statemachine (for a short delay)
+	disableI2c();
+	postTempixEvent(evI2CResetNeeded);  //  implemented on statemachine (eg. for a short delay)
 }

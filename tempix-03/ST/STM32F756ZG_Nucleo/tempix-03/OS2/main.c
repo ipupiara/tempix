@@ -33,8 +33,8 @@
 *                                            INCLUDE FILES
 *********************************************************************************************************
 */
+#include <main.h>
 
-#include  <uosii-includes.h>
 
 #include <uart-comms.h>
 #include <uart-hw.h>
@@ -67,6 +67,9 @@
 static  OS_STK  StartupTaskStk[APP_CFG_STARTUP_TASK_STK_SIZE];
 
 
+
+
+
 /*
 *********************************************************************************************************
 *                                         FUNCTION PROTOTYPES
@@ -76,23 +79,31 @@ static  OS_STK  StartupTaskStk[APP_CFG_STARTUP_TASK_STK_SIZE];
 static  void  StartupTask (void  *p_arg);
 
 
-/*
-*********************************************************************************************************
-*                                                main()
-*
-* Description : This is the standard entry point for C code.  It is assumed that your code will call
-*               main() once you have performed all necessary initialization.
-*
-* Arguments   : none
-*
-* Returns     : none
-*
-* Notes       : none
-*********************************************************************************************************
-*/
 
 
+void initEventQ()
+{
+	uint8_t err= OS_ERR_NONE;
+	if (err == OS_ERR_NONE) {
+		backGroundEventMem = OSMemCreate(&backGroundEventBuffer[0], backGroundEventBufSz, sizeof(backGroundEvent), &err);
+	}
+	if (err == OS_ERR_NONE) {
+		OSMemNameSet(backGroundEventMem, (INT8U*)"backGroundEventMem", &err);
+	}
+	if (err == OS_ERR_NONE) {
+		backGroundEventTaskQ = OSQCreate(&backGroundEventPtrBuffer[0], backGroundEventBufSz);
+		if (! backGroundEventTaskQ) err = 0xFF;
+	}
 
+}
+
+uint8_t dispatchBackgroundEvent(backGroundEvent* ev)
+{
+	uint8_t res;
+
+
+	return res;
+}
 
 int  main (void)
 {
@@ -110,7 +121,7 @@ int  main (void)
     CPU_Init();                                                 /* Initialize the uC/CPU services                       */
 
     OSInit();                                                   /* Initialize uC/OS-II    */
-
+    initEventQ();
 
 
     OSTaskCreateExt( StartupTask,                               /* Create the startup task                              */
@@ -188,6 +199,7 @@ static  void  StartupTask (void *p_arg)
         	BSP_LED_Off(USER_LD3);
         }
         OSTimeDlyHMSM(0u, 0u, 1u, 0u);
+
 //        printStartMessage();
 //        info_printf("\nmsgCounter %u  fe %u te %u dme %u\n", txMsgCounter, feCounter, teCounter, dmeCounter );
     }

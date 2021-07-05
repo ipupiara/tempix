@@ -8,6 +8,7 @@
 #ifndef ST_TEMPIX_TOOLS_UART_HW_H_
 #define ST_TEMPIX_TOOLS_UART_HW_H_
 
+#define maxUartReceiveDmaStringSize  0x80
 
 #include <uosii-includes.h>
 
