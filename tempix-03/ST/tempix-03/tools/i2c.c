@@ -4,6 +4,8 @@
 #include <dma-tools.h>
 #include <uosii-includes.h>
 #include <StateClass.h>
+#include <main.h>
+#include <uart-comms.h>
 
 #define  MAX( a, b ) ( ( a > b) ? a : b )
 
@@ -38,7 +40,6 @@ typedef struct
 
 i2cJobDataType i2cJobData;
 INT8U  i2cErr;
-uint8_t i2cInitialized;
 
 
 static void i2cTransferConfig(I2C_HandleTypeDef *hi2c,  uint16_t DevAddress, uint8_t Size,  uint8_t Request)
@@ -333,6 +334,7 @@ INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U 
 			if (semErr != OS_ERR_NONE) {
 				i2cErr = semErr;
 			}
+			//  todo wait until data written into eeprom memory
 			OSSemSet(i2cResourceSem, 1, &semErr);
 			res = i2cErr;
 		}  else {
@@ -427,7 +429,7 @@ void disableI2c()
 	__HAL_I2C_DISABLE(&hi2c1);
 }
 
-void reInitI2cAfterError()
+void reInitI2cAfterError()   // called from backgroundEventQ
 {
 	INT8U err = OS_ERR_NONE;
 	OSSemDel(i2cJobSem, OS_DEL_ALWAYS, &err);
@@ -438,9 +440,18 @@ void reInitI2cAfterError()
 
 void reInitOnError()
 {   //  needs tobe kernel aware  !
-
+	backGroundEvent *  bgEvPtr;
+	uint8_t err = OS_ERR_NONE;
 	i2cInitialized = 0;
 	i2cSendStop(&hi2c1);
 	disableI2c();
-	postTempixEvent(evI2CResetNeeded);  //  implemented on statemachine (eg. for a short delay)
+	bgEvPtr = (backGroundEvent *) OSMemGet(backGroundEventMem, &err);
+	if( bgEvPtr != 0 ) {
+		bgEvPtr->evType = i2cReinitNeeded;
+		err = OSQPost(backGroundEventTaskQ, (void *)bgEvPtr);
+	}
+	if ( err != OS_ERR_NONE) {
+		info_printf("critical: could not reset i2c\n");
+	}
+
 }

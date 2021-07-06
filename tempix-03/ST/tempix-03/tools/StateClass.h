@@ -17,7 +17,6 @@ enum  eEventTypes
 	evClutchBreakPressed,
 	evErrorDetected,
 	evErrorResovled,
-	evI2CResetNeeded,
 	evFatalError
 };
 

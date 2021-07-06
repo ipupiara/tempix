@@ -10,7 +10,7 @@ INT8U sendI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars);
 //
 INT8U receiveI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars);
 
-
+INT8U i2cInitialized;
 INT8U initI2c();
 void reInitI2cAfterError();
 void enableI2c();

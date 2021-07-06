@@ -79,8 +79,6 @@ static  OS_STK  StartupTaskStk[APP_CFG_STARTUP_TASK_STK_SIZE];
 static  void  StartupTask (void  *p_arg);
 
 
-
-
 void initEventQ()
 {
 	uint8_t err= OS_ERR_NONE;
@@ -99,7 +97,7 @@ void initEventQ()
 
 uint8_t dispatchBackgroundEvent(backGroundEvent* ev)
 {
-	uint8_t res;
+	uint8_t res = OS_ERR_NONE;
 
 
 	return res;
@@ -166,6 +164,8 @@ int  main (void)
 static  void  StartupTask (void *p_arg)
 {
    (void)p_arg;
+   uint8_t err = OS_ERR_NONE;
+   backGroundEvent *  bgEvPtr;
 
    BSP_OS_TickEnable();                                        /* Enable the tick timer and interrupt                  */
    BSP_LED_Init();                                             /* Initialize LEDs                                      */
@@ -173,7 +173,10 @@ static  void  StartupTask (void *p_arg)
 
     init_printf();
 //    initI2c();
+
+
 	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
+
 	printStartMessage();
 //	startTempixStateChart();
 //	initGpioSupport();
@@ -198,9 +201,23 @@ static  void  StartupTask (void *p_arg)
         } else {
         	BSP_LED_Off(USER_LD3);
         }
-        OSTimeDlyHMSM(0u, 0u, 1u, 0u);
-
-//        printStartMessage();
-//        info_printf("\nmsgCounter %u  fe %u te %u dme %u\n", txMsgCounter, feCounter, teCounter, dmeCounter );
+      	bgEvPtr = (backGroundEvent *)OSQPend(backGroundEventTaskQ, 1009, &err);
+       	if (err == OS_ERR_NONE) {
+       		switch (bgEvPtr->evType) {                /* See if we timed-out or aborted                */
+				case evUartStringReceived:                         /* Extract message from TCB (Put there by QPost) */
+					forwardReceivedStringBuffer(bgEvPtr->evData.uartString);
+					break;
+				case i2cReinitNeeded:
+					OSTimeDlyHMSM(0, 0, 0, 2);
+					reInitI2cAfterError();
+					 break;
+				default:
+					info_printf("backGroundEvent %i not handled.\n",bgEvPtr->evType);
+					break;
+       		}
+       	}
+       	if (i2cInitialized == 0)  {  // poll for this here, because else i2c will no longer work
+       		reInitI2cAfterError();
+       	}
     }
 }

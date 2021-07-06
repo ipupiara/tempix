@@ -7,6 +7,7 @@
 enum backGroundEvents
 {
 	evUartStringReceived,
+	i2cReinitNeeded,
 	evNumberOfBackgroundEvents
 };
 

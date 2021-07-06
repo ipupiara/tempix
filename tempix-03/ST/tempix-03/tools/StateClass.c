@@ -162,12 +162,12 @@ void prepareFsmUosMethod()
 uStInt evTempixStateChartChecker(void)
 {
 	uStInt res = uStIntNoMatch;
-	if (currentTempixEvent->evType   == evI2CResetNeeded) {
-		OSTimeDlyHMSM(0, 0, 0, 2);
-		// give it some time (1-2 ms) for a hw reset (no big delay for this fsm)
-		reInitI2cAfterError();
-		res =  uStIntHandlingDone;
-	}
+//	if (currentTempixEvent->evType   == evI2CResetNeeded) {
+//		OSTimeDlyHMSM(0, 0, 0, 2);
+//		// give it some time (1-2 ms) for a hw reset (no big delay for this fsm)
+//		reInitI2cAfterError();
+//		res =  uStIntHandlingDone;
+//	}
 
 	return res;
 }
