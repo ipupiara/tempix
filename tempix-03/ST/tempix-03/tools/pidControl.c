@@ -16,7 +16,9 @@ int8_t m_started;
 real m_kPTot, m_kP, m_kI, m_kD, m_stepTime, m_error_thresh;   // persistent values to save on eeprom
 real  m_integral, m_prev_error, m_inv_stepTime, corrCarryOver;    //  non persistent values
 
-// EEpromPart
+// EEpromPart  todo move this later into a new file... bad luck with this
+//  eclipse linkage diddle doodle almost impossible without fanatic knowlegde of this
+//  eclipse thing
 
 OS_EVENT *i2cTransactionSem;
 
@@ -49,41 +51,79 @@ const eepromAccessor eepromAx[amtEepromAccessors] = {
 	{error_thresh, 5 * lenOfReal,lenOfReal }
 };
 
-INT8U storeEepromByteArray(INT8U adr,INT8U memAdr, INT8U* pString,INT8U amtChars)
+uint8_t  setEepromAddress(INT8U adr,INT8U memAdr)
 {
-
-	return sendI2cByteArray(adr, pString, amtChars,  0);
+	uint8_t res = 0;
+	uint8_t byteArr [1];
+	byteArray[0] = memAdr;
+	res = sendI2cByteArray(adr, &byteArr[0], 1, 0);
+	if (res == 0) {
+		pollForReady(adr, 0);  // todo test if this is even needed here, without something to write
+	}
+	return res;
 }
 
+INT8U transmitEepromByteArray(INT8U adr,INT8U memAdr, INT8U* pString,INT8U amtChars, unit8_t doStore)
+{
+	uint8_t res = 0;
+	uint8_t semErr;
 
-void storeReal(real val,uint8_t ind)
+	OSSemPend(i2cTransactionSem, 2803, &semErr);
+	if (semErr == OS_ERR_NONE) {
+		res = setAddress(adr,memAdr);
+		if (res == 0) {
+			if (doStore) {
+				res = sendI2cByteArray(adr, &byteArr[0], 1, 0);
+			}  else {
+				res= receiveI2cByteArray(adr, pString, amtChars);
+			}
+		}
+
+	}  else {
+		res = semErr;
+		res = OSSemPost(i2cTransactionSem);
+	}
+
+	return res;
+}
+
+uint8_t loadEepromByteArray(INT8U adr,INT8U memAdr, INT8U* pString,INT8U amtChars)
+{
+	uint8_t res = 0;
+
+	return res;
+}
+
+uint8_t storeReal(real val,uint8_t ind)
 {
 	uint8_t res = 0;
 	uint8_t  realStr[lenOfReal + 1];
 	memset(realStr,0,sizeof(realStr));
 	snprintf((char *)realStr, lenOfReal , "%e", val);
-	res = sendI2cByteArray(eepromAx[ind].startPos,realStr,eepromAx[ind].len, 5);  //  todo this is wrong, correct
+	---- res = sendI2cByteArray(eepromAx[ind].startPos,realStr,eepromAx[ind].len, 5);  //  todo this is wrong, correct
 	if (res != 0) {}
+	return res;
 }
 
-real restoreReal(uint8_t ind)
+uint8_t restoreReal(uint8_t ind, real* result)
 {
-	real res = 0.0;
+	*result = 0.0;
 	uint8_t  realStr[lenOfReal + 1];
-	uint8_t valid;
+	uint8_t err = OS_ERR_NONE;
 	uint8_t endPtr;
 
 	memset(realStr,0,sizeof(realStr));
-	valid = receiveI2cByteArray(eepromAx[ind].startPos,&realStr[0],eepromAx[ind].len);
-	if (valid != 0) {
-		res =  strtod((const char*) &realStr[0],(char **) &endPtr);
+	err = receiveI2cByteArray(eepromAx[ind].startPos,&realStr[0],eepromAx[ind].len);
+	if (err != 0) {
+		------*result =  strtod((const char*) &realStr[0],(char **) &endPtr);
 
 	    if (res == 0) {
 	        if (errno == ERANGE) {}  //  tobe tested, in our case, error should be contained in endPtr, which
 	        						//  may not have a valid value (eg. 0, not a valid address)
+	    }else {
+			storeReal(1.0, ind);
+
 	    }
-	} else {
-		storeReal(1.0, ind);
 	}
 	return res;
 }
