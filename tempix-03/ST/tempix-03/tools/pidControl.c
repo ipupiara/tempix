@@ -12,6 +12,9 @@
 #include <uosii-includes.h>
 #include <throttleActuator.h>
 
+#define eepromI2cAdr   0x00
+
+
 int8_t m_started;
 real m_kPTot, m_kP, m_kI, m_kD, m_stepTime, m_error_thresh;   // persistent values to save on eeprom
 real  m_integral, m_prev_error, m_inv_stepTime, corrCarryOver;    //  non persistent values
@@ -33,6 +36,13 @@ enum valuesToSave
 	amtEepromAccessors
 };
 
+
+#define lenOfReal  14
+
+
+
+////   begin eeprom code /////////////
+
 typedef struct  {
 	uint8_t index;
 	uint8_t startPos;
@@ -40,7 +50,52 @@ typedef struct  {
 } eepromAccessor ;
 
 
-#define lenOfReal  14
+uint8_t  setEepromAddress(INT8U i2cAdr,INT8U memAdr)
+{
+	uint8_t res = 0;
+	uint8_t byteArr [1];
+	byteArr[0] = memAdr;
+	res = sendI2cByteArray(i2cAdr, &byteArr[0], 1, 0);
+	if (res == 0) {
+		pollForReady(i2cAdr, 0);  // todo test if this is even needed here, without something to write
+	}
+	return res;
+}
+
+INT8U transmitEepromByteArray(INT8U i2cAdr,INT8U memAdr, INT8U* pString,INT8U amtChars, uint8_t doStore)
+{
+	uint8_t res = 0;
+	uint8_t semErr;
+
+	OSSemPend(i2cTransactionSem, 2803, &semErr);
+	memset(pString,0,amtChars);
+	if (semErr == OS_ERR_NONE) {
+		res = setEepromAddress(i2cAdr,memAdr);
+		if (res == 0) {
+			if (doStore) {
+				res = sendI2cByteArray(i2cAdr, pString, amtChars, 0);
+			}  else {
+				res= receiveI2cByteArray(i2cAdr, pString, amtChars);
+			}
+		}
+	}  else {
+		res = semErr;
+		res = OSSemPost(i2cTransactionSem);
+	}
+	return res;
+}
+
+void initEeprom()
+{
+	uint8_t err = OS_ERR_NONE;
+	if (err == OS_ERR_NONE) {
+		 i2cTransactionSem = OSSemCreate(1);
+	}
+}
+
+//  end eeprom part  //////////////////////////////////
+//////// end eeprom code ///////////
+
 
 const eepromAccessor eepromAx[amtEepromAccessors] = {
     {kPTot, 0,lenOfReal},
@@ -51,61 +106,22 @@ const eepromAccessor eepromAx[amtEepromAccessors] = {
 	{error_thresh, 5 * lenOfReal,lenOfReal }
 };
 
-uint8_t  setEepromAddress(INT8U adr,INT8U memAdr)
-{
-	uint8_t res = 0;
-	uint8_t byteArr [1];
-	byteArray[0] = memAdr;
-	res = sendI2cByteArray(adr, &byteArr[0], 1, 0);
-	if (res == 0) {
-		pollForReady(adr, 0);  // todo test if this is even needed here, without something to write
-	}
-	return res;
-}
-
-INT8U transmitEepromByteArray(INT8U adr,INT8U memAdr, INT8U* pString,INT8U amtChars, unit8_t doStore)
-{
-	uint8_t res = 0;
-	uint8_t semErr;
-
-	OSSemPend(i2cTransactionSem, 2803, &semErr);
-	if (semErr == OS_ERR_NONE) {
-		res = setAddress(adr,memAdr);
-		if (res == 0) {
-			if (doStore) {
-				res = sendI2cByteArray(adr, &byteArr[0], 1, 0);
-			}  else {
-				res= receiveI2cByteArray(adr, pString, amtChars);
-			}
-		}
-
-	}  else {
-		res = semErr;
-		res = OSSemPost(i2cTransactionSem);
-	}
-
-	return res;
-}
-
-uint8_t loadEepromByteArray(INT8U adr,INT8U memAdr, INT8U* pString,INT8U amtChars)
-{
-	uint8_t res = 0;
-
-	return res;
-}
-
-uint8_t storeReal(real val,uint8_t ind)
+uint8_t storeReal(real val, uint8_t realInd)
 {
 	uint8_t res = 0;
 	uint8_t  realStr[lenOfReal + 1];
 	memset(realStr,0,sizeof(realStr));
 	snprintf((char *)realStr, lenOfReal , "%e", val);
-	---- res = sendI2cByteArray(eepromAx[ind].startPos,realStr,eepromAx[ind].len, 5);  //  todo this is wrong, correct
-	if (res != 0) {}
+	res = transmitEepromByteArray(eepromI2cAdr, eepromAx[realInd].startPos, realStr, eepromAx[realInd].len, 1);
+
+	if (res != 0) {
+		//check for errors
+	}
 	return res;
 }
 
-uint8_t restoreReal(uint8_t ind, real* result)
+
+uint8_t restoreReal(real* result, uint8_t realInd )
 {
 	*result = 0.0;
 	uint8_t  realStr[lenOfReal + 1];
@@ -113,53 +129,38 @@ uint8_t restoreReal(uint8_t ind, real* result)
 	uint8_t endPtr;
 
 	memset(realStr,0,sizeof(realStr));
-	err = receiveI2cByteArray(eepromAx[ind].startPos,&realStr[0],eepromAx[ind].len);
+
+	err = transmitEepromByteArray(eepromI2cAdr, eepromAx[realInd].startPos, realStr, eepromAx [realInd].len, 0);
 	if (err != 0) {
-		------*result =  strtod((const char*) &realStr[0],(char **) &endPtr);
-
-	    if (res == 0) {
-	        if (errno == ERANGE) {}  //  tobe tested, in our case, error should be contained in endPtr, which
+		*result =  strtod((const char*) &realStr[0],(char **) &endPtr);
+	    if (*result == 0.0) {
+	        if (endPtr == ERANGE) {err = endPtr; }  //  tobe tested, in our case, error should be contained in endPtr, which
 	        						//  may not have a valid value (eg. 0, not a valid address)
-	    }else {
-			storeReal(1.0, ind);
-
+	    } else {
+			storeReal(1.0, realInd);
 	    }
 	}
-	return res;
+	return err;
 }
 
 
-
-void initEeprom()
+uint8_t restorePersistentValues()
 {
-	uint8_t err = OS_ERR_NONE;
-	if (err == OS_ERR_NONE) {
-		 i2cTransactionSem = OSSemCreate(1);
-	}
+	uint8_t err;
+	err = restoreReal(&m_kPTot,kPTot);
+	err |= restoreReal(&m_kP, kP);
+	err |= restoreReal(&m_kI, kI);
+	err |= restoreReal(&m_kD, kD);
+	err |= restoreReal(&m_stepTime, stepTime);
+	err |= restoreReal(&m_error_thresh, error_thresh);
+	return err;
 }
-
-//  end eeprom part
-
-
-void restorePersistentValues()
-{
-	m_kPTot = restoreReal(kPTot);
-	m_kP = restoreReal(kP);
-	m_kI = restoreReal(kI);
-	m_kD = restoreReal(kD);
-	m_stepTime = restoreReal(stepTime);
-	m_error_thresh = restoreReal(error_thresh);
-}
-
-
 
 uint32_t   desiredSpeedInv, actualSpeedInv;
 
 uint8_t    resetOnError;
 
 #define correctionThreshold  30
-
-// todo implement eeprom save restore of parameters and setting parameters via comms (uart...)
 
 void sendMessageToServoControl(int32_t corrInt)
 {
@@ -248,6 +249,7 @@ void calcNextTriacDelay()
 
 void initPid()
 {
+	restorePersistentValues();
 	InitializePID();
 }
 
