@@ -4,6 +4,9 @@
 #include<stdint.h>
 #include <math.h>
 
+
+void initEeprom();
+
 typedef double real;
 
 enum directions {

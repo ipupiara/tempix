@@ -92,7 +92,6 @@ void initEventQ()
 		backGroundEventTaskQ = OSQCreate(&backGroundEventPtrBuffer[0], backGroundEventBufSz);
 		if (! backGroundEventTaskQ) err = 0xFF;
 	}
-
 }
 
 uint8_t dispatchBackgroundEvent(backGroundEvent* ev)
@@ -172,8 +171,8 @@ static  void  StartupTask (void *p_arg)
 //  OS_TRACE_INIT();
 
     init_printf();
-//    initI2c();
-
+    initI2c();
+    initEeprom();
 
 	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
 
@@ -183,7 +182,7 @@ static  void  StartupTask (void *p_arg)
 //	initAdc();
 //	initCanComms();
 //	initServoControl();
-//	initPid();
+	initPid();
 
 
 #if (OS_TASK_STAT_EN > 0u)

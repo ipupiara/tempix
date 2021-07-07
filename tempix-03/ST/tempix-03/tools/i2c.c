@@ -7,17 +7,17 @@
 #include <main.h>
 #include <uart-comms.h>
 
-#define  MAX( a, b ) ( ( a > b) ? a : b )
 
-#define __HAL_I2C_TxDmaENABLE(__HANDLE__)  (SET_BIT((__HANDLE__)->Instance->CR1,  I2C_CR1_TXDMAEN))
-#define __HAL_I2C_RxDmaENABLE(__HANDLE__)  (SET_BIT((__HANDLE__)->Instance->CR1,  I2C_CR1_RXDMAEN))
-#define __HAL_I2C_AutoEndENABLE(__HANDLE__)  (SET_BIT((__HANDLE__)->Instance->CR2,  I2C_CR2_AUTOEND ))
 
 OS_EVENT *i2cResourceSem;
+
+
 
 OS_EVENT *i2cJobSem;
 
 I2C_HandleTypeDef hi2c1;
+
+uint8_t  transmitErrorCollectorInt8u;
 
 //OS_STK  i2cMethodStk[APP_CFG_DEFAULT_TASK_STK_SIZE];
 
@@ -39,39 +39,25 @@ typedef struct
 } i2cJobDataType;
 
 i2cJobDataType i2cJobData;
-INT8U  i2cErr;
 
-
-static void i2cTransferConfig(I2C_HandleTypeDef *hi2c,  uint16_t DevAddress, uint8_t Size,  uint8_t Request)
-{
-  MODIFY_REG(hi2c->Instance->CR2, (I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RD_WRN ),
-       (uint32_t)(((uint32_t)DevAddress << 1) | ((uint32_t)Size << I2C_CR2_NBYTES_Pos)  |
-    		   ((uint32_t)Request)<< I2C_CR2_RD_WRN_Pos));
-}
-
-static void i2cSendStart(I2C_HandleTypeDef *hi2c)
-{
-	WRITE_REG(hi2c->Instance->CR2, ((uint32_t)1U << I2C_CR2_START_Pos));
-}
-
-static void i2cSendStop(I2C_HandleTypeDef *hi2c)
-{
-	WRITE_REG(hi2c->Instance->CR2, ((uint32_t)1U << I2C_CR2_STOP_Pos));
-}
-
-
-void i2cFinished()
+void setI2cJobSema()
 {
 	INT8U err;
 	OSSemSet(i2cJobSem,1,&err);
+}
+
+void i2cFinishedOk()
+{
+	setI2cJobSema();
 }
 
 
 void i2cError(INT8U err)
 {
 	 //log error
-	 i2cErr = err;
-//   todo check if    i2cFinished();   is needed here
+	 transmitErrorCollectorInt8u = err;
+	 setI2cJobSema();
+
 }
 
 
@@ -92,7 +78,7 @@ void DMA1_Stream0_IRQHandler(void)
 
 	if (__HAL_DMA_GET_FLAG(&hdma_i2c1_rx,DMA_FLAG_TCIF0_4) != 0)  {
 //		transferBuffer();
-//		i2cFinished();
+//		i2cFinishedOk();
 		__HAL_DMA_CLEAR_FLAG(&hdma_i2c1_rx,DMA_FLAG_TCIF0_4);
 	}
 
@@ -125,7 +111,7 @@ void DMA1_Stream6_IRQHandler(void)
 
 	if (__HAL_DMA_GET_FLAG(&hdma_i2c1_tx,DMA_FLAG_TCIF2_6) != 0)  {
 //		transferBuffer();
-//		i2cFinished();
+//		i2cFinishedOk();
 		__HAL_DMA_CLEAR_FLAG(&hdma_i2c1_tx,DMA_FLAG_TCIF2_6);
 	}
 
@@ -260,15 +246,15 @@ void I2C1_EV_IRQHandler(void)
 {
 	uint32_t itflags   = READ_REG(hi2c1.Instance->ISR);
 #ifndef i2cUseDma
-	if ((itflags & I2C_FLAG_TXIS) != RESET)   {
+	if ((itflags & I2C_FLAG_TXIS) != 0)   {
 		sendNextI2CByte();
 	}
-	if ((itflags & I2C_FLAG_RXNE) != RESET)   {
+	if ((itflags & I2C_FLAG_RXNE) != 0)   {
 		receiveNextI2CByte();
 	}
 #endif
-	if ((itflags & I2C_FLAG_TC) != RESET)  {
-		i2cFinished();
+	if ((itflags & I2C_FLAG_TC) != 0)  {
+		i2cFinishedOk();
 	}
 }
 
@@ -309,15 +295,16 @@ void I2C1_ER_IRQHandler(void)
 	OSIntExit();
 }
 
-INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U doSend)
+INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U doSend, uint8_t delayMs)
 {
-	INT8U semErr;
 	uint8_t res = 0xFF;
-	if (i2cInitialized == 1) {
+
+	if ((i2cInitialized == 1) && (OSIntNesting > 0u)) {
+		INT8U semErr;
 		OSSemPend(i2cResourceSem, 2803, &semErr);
 		if (semErr == OS_ERR_NONE) {
-			i2cErr = OS_ERR_NONE;
-			OSSemSet(i2cJobSem,0,&semErr);  // be sure it was not set multiple times at last end of transfer..
+			transmitErrorCollectorInt8u = OS_ERR_NONE;
+			OSSemSet(i2cJobSem,0,&semErr);  // debug: be sure it was not set multiple times at last end of transfer..
 			i2cJobData.buffer = pResultString;
 			i2cJobData.amtChars = amtChars;
 			i2cJobData.bufferCnt = 0;
@@ -326,17 +313,23 @@ INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U 
 				i2cJobData.jobType = sendI2c;
 			} else {
 				i2cJobData.jobType = receiveI2c;
+				if (pResultString != 0) {
 				memset(pResultString,0,amtChars);  // todo check if this work correct (not content of pointer variable is changed)
+				}
 			}
+
 			establishContactAndRun();
 
 			OSSemPend(i2cJobSem, 0, &semErr);
 			if (semErr != OS_ERR_NONE) {
-				i2cErr = semErr;
+				transmitErrorCollectorInt8u = semErr;
+			}
+			if (delayMs > 0) {
+				OSTimeDlyHMSM(0, 0, 0, delayMs);
 			}
 			//  todo wait until data written into eeprom memory
 			OSSemSet(i2cResourceSem, 1, &semErr);
-			res = i2cErr;
+			res = transmitErrorCollectorInt8u;
 		}  else {
 			res = semErr;
 		}
@@ -344,20 +337,38 @@ INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U 
 	return res;
 }
 
-INT8U sendI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars)
+INT8U sendI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars, uint8_t delayMs)
 {
-	return transmitI2cByteArray(adr, pString, amtChars, 1);
+	return transmitI2cByteArray(adr, pString, amtChars, 1, delayMs);
 }
 
 INT8U receiveI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars)
 {
-	return transmitI2cByteArray(adr, pString, amtChars, 0);
+	return transmitI2cByteArray(adr, pString, amtChars, 0, 0);
 }
+
+
+
+uint8_t pollForReady(INT8U adr, uint8_t delay)
+{
+	int8_t res = 0xFF;
+	int8_t resOnErrStack = resetOnError;
+	resetOnError = 0;
+	uint8_t dummyBuffer [1];
+
+	while (res != 0) {
+		sendI2cByteArray(adr,&dummyBuffer[0],0, delay);  // do just a very short delay if desired
+		resetOnError = resOnErrStack;
+	}
+    return res;
+}
+
 
 INT8U initI2c()
 {
 
 	i2cInitialized = 0;
+	resetOnError = 1;
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
 	INT8U err = OS_ERR_NONE;
@@ -367,6 +378,7 @@ INT8U initI2c()
 	if (err == OS_ERR_NONE) {
 		 i2cResourceSem = OSSemCreate(1);
 	}
+
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**I2C1 GPIO Configuration
     PB6     ------> I2C1_SCL
@@ -439,19 +451,20 @@ void reInitI2cAfterError()   // called from backgroundEventQ
 
 
 void reInitOnError()
-{   //  needs tobe kernel aware  !
-	backGroundEvent *  bgEvPtr;
-	uint8_t err = OS_ERR_NONE;
-	i2cInitialized = 0;
+{
 	i2cSendStop(&hi2c1);
-	disableI2c();
-	bgEvPtr = (backGroundEvent *) OSMemGet(backGroundEventMem, &err);
-	if( bgEvPtr != 0 ) {
-		bgEvPtr->evType = i2cReinitNeeded;
-		err = OSQPost(backGroundEventTaskQ, (void *)bgEvPtr);
+	if (resetOnError != 0)  {
+		uint8_t err = OS_ERR_NONE;
+		backGroundEvent *  bgEvPtr;
+		i2cInitialized = 0;
+		disableI2c();
+		bgEvPtr = (backGroundEvent *) OSMemGet(backGroundEventMem, &err);
+		if( bgEvPtr != 0 ) {
+			bgEvPtr->evType = i2cReinitNeeded;
+			err = OSQPost(backGroundEventTaskQ, (void *)bgEvPtr);
+		}
+		if ( err != OS_ERR_NONE) {
+			info_printf("critical: could not reset i2c\n");
+		}
 	}
-	if ( err != OS_ERR_NONE) {
-		info_printf("critical: could not reset i2c\n");
-	}
-
 }

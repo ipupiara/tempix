@@ -16,6 +16,10 @@ int8_t m_started;
 real m_kPTot, m_kP, m_kI, m_kD, m_stepTime, m_error_thresh;   // persistent values to save on eeprom
 real  m_integral, m_prev_error, m_inv_stepTime, corrCarryOver;    //  non persistent values
 
+// EEpromPart
+
+OS_EVENT *i2cTransactionSem;
+
 enum valuesToSave
 {
 	kPTot,
@@ -45,13 +49,20 @@ const eepromAccessor eepromAx[amtEepromAccessors] = {
 	{error_thresh, 5 * lenOfReal,lenOfReal }
 };
 
+INT8U storeEepromByteArray(INT8U adr,INT8U memAdr, INT8U* pString,INT8U amtChars)
+{
+
+	return sendI2cByteArray(adr, pString, amtChars,  0);
+}
+
+
 void storeReal(real val,uint8_t ind)
 {
 	uint8_t res = 0;
 	uint8_t  realStr[lenOfReal + 1];
 	memset(realStr,0,sizeof(realStr));
 	snprintf((char *)realStr, lenOfReal , "%e", val);
-	res = sendI2cByteArray(eepromAx[ind].startPos,realStr,eepromAx[ind].len);
+	res = sendI2cByteArray(eepromAx[ind].startPos,realStr,eepromAx[ind].len, 5);  //  todo this is wrong, correct
 	if (res != 0) {}
 }
 
@@ -77,6 +88,19 @@ real restoreReal(uint8_t ind)
 	return res;
 }
 
+
+
+void initEeprom()
+{
+	uint8_t err = OS_ERR_NONE;
+	if (err == OS_ERR_NONE) {
+		 i2cTransactionSem = OSSemCreate(1);
+	}
+}
+
+//  end eeprom part
+
+
 void restorePersistentValues()
 {
 	m_kPTot = restoreReal(kPTot);
@@ -90,6 +114,8 @@ void restorePersistentValues()
 
 
 uint32_t   desiredSpeedInv, actualSpeedInv;
+
+uint8_t    resetOnError;
 
 #define correctionThreshold  30
 

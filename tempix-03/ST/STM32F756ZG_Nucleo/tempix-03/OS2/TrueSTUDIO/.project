@@ -276,7 +276,16 @@
 			<type>1</type>
 			<locationURI>PARENT-2-PROJECT_LOC/uosii-includes.h</locationURI>
 		</link>
-
+		<link>
+			<name>ST/tempix-03/commonResources/canRelated.c</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/tempixActuator/commonResources/canRelated.c</locationURI>
+		</link>
+		<link>
+			<name>ST/tempix-03/commonResources/canRelated.h</name>
+			<type>1</type>
+			<locationURI>WORKSPACE_LOC/tempixActuator/commonResources/canRelated.h</locationURI>
+		</link>
 		<link>
 			<name>ST/tempix-03/tools/StateClass.c</name>
 			<type>1</type>
@@ -307,8 +316,6 @@
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/adcControl.h</locationURI>
 		</link>
-
-
 		<link>
 			<name>ST/tempix-03/tools/canComms.c</name>
 			<type>1</type>
@@ -319,30 +326,10 @@
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/canComms.h</locationURI>
 		</link>
-
-
-		<link>
-			<name>ST/tempix-03/commonResources/canRelated.c</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/tempixActuator/commonResources/canRelated.c</locationURI>
-		</link>
-		<link>
-			<name>ST/tempix-03/commonResources/canRelated.h</name>
-			<type>1</type>
-			<locationURI>WORKSPACE_LOC/tempixActuator/commonResources/canRelated.h</locationURI>
-		</link>
-
-
-
 		<link>
 			<name>ST/tempix-03/tools/dma-tools.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/dma-tools.c</locationURI>
-		</link>
-		<link>
-			<name>ST/tempix-03/tools/dma-tools.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/dma-tools.h</locationURI>
 		</link>
 		<link>
 			<name>ST/tempix-03/tools/gpioSupport.c</name>
@@ -508,6 +495,11 @@
 			<name>ST/STM32F756ZG_Nucleo/tempix-03/OS2/app_hooks.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/app_hooks.c</locationURI>
+		</link>
+		<link>
+			<name>ST/STM32F756ZG_Nucleo/tempix-03/OS2/dma-tools.h</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/dma-tools.h</locationURI>
 		</link>
 		<link>
 			<name>ST/STM32F756ZG_Nucleo/tempix-03/OS2/main.c</name>
