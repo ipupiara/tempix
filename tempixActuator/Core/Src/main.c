@@ -185,6 +185,18 @@ static void MX_CAN_Init(void)
 
   /* USER CODE BEGIN CAN_Init 1 */
 
+
+	/**CAN1 GPIO Configuration
+	PA11     ------> CAN1_RX
+	PA12     ------> CAN1_TX
+	*/
+	GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
+	GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
   /* USER CODE END CAN_Init 1 */
   hcan.Instance = CAN1;
   hcan.Init.Prescaler = 48;
