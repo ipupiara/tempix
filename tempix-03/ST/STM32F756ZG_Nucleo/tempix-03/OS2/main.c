@@ -171,12 +171,12 @@ static  void  StartupTask (void *p_arg)
 //  OS_TRACE_INIT();
 
     init_printf();
+	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
+	printStartMessage();
+
     initI2c();
     initEeprom();
 
-	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
-
-	printStartMessage();
 //	startTempixStateChart();
 //	initGpioSupport();
 //	initAdc();

@@ -61,6 +61,17 @@ void i2cError(INT8U err)
 }
 
 
+void enableI2c()
+{
+	 __HAL_I2C_ENABLE(&hi2c1);
+}
+
+void disableI2c()
+{
+	__HAL_I2C_DISABLE(&hi2c1);
+}
+
+
 #ifdef i2cUseDma
 
 DMA_HandleTypeDef hdma_i2c1_rx;
@@ -170,13 +181,19 @@ void i2cDmaInit()
     {
     	i2cError(0x86);
     }
-
     __HAL_LINKDMA(&hi2c1,hdmatx,hdma_i2c1_tx);
 
-	  BSP_IntVectSet (DMA1_Stream0_IRQn,7,CPU_INT_KA,DMA1_Stream0_IRQHandler);
-	  BSP_IntVectSet (DMA1_Stream6_IRQn,7,CPU_INT_KA,DMA1_Stream6_IRQHandler);
 	  __HAL_I2C_TxDmaENABLE(&hi2c1);
 	  __HAL_I2C_RxDmaENABLE(&hi2c1);
+
+	  BSP_IntVectSet (DMA1_Stream0_IRQn,tempixIsrPrioLevel,CPU_INT_KA,DMA1_Stream0_IRQHandler);
+	  BSP_IntVectSet (DMA1_Stream6_IRQn,tempixIsrPrioLevel,CPU_INT_KA,DMA1_Stream6_IRQHandler);
+
+	clearDmaInterruptFlags(&hdma_i2c1_tx);
+	clearDmaInterruptFlags(&hdma_i2c1_rx);
+
+	BSP_IntEnable(DMA1_Stream0_IRQn);
+	BSP_IntEnable(DMA1_Stream6_IRQn);
 }
 
 #else
@@ -286,7 +303,16 @@ void I2C1_ER_IRQHandler(void)
 	  {
 	    __HAL_I2C_CLEAR_FLAG(&hi2c1, I2C_FLAG_ARLO);
 	  }
-	i2cError(0x82);  //  todo implement refined error message with above details....
+	  i2cError(0x82);  //  todo implement refined error message with above details....
+
+	  // next two ifs are just for debugging reasons
+	  if ((itflags & I2C_FLAG_AF) != 0) {   //  should actually be named I2C_FLAG_NACKF. how this name ?
+		  i2cError(0x69);
+	  }
+	  if ((itflags & I2C_FLAG_STOPF) != 0) {
+		  i2cError(0x96);
+	  }
+
 
 	CPU_CRITICAL_ENTER();
 	reInitOnError();
@@ -299,7 +325,7 @@ INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U 
 {
 	uint8_t res = 0xFF;
 
-	if ((i2cInitialized == 1) && (OSIntNesting > 0u)) {
+	if ((i2cInitialized == 1) ) {          //&& (OSIntNesting > 0u))
 		INT8U semErr;
 		OSSemPend(i2cResourceSem, 2803, &semErr);
 		if (semErr == OS_ERR_NONE) {
@@ -352,13 +378,13 @@ INT8U receiveI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars)
 uint8_t pollForReady(INT8U adr, uint8_t delay)
 {
 	int8_t res = 0xFF;
-	int8_t resOnErrStack = resetOnError;
-	resetOnError = 0;
+//	int8_t resOnErrStack = resetOnError;
+//	resetOnError = 0;
 	uint8_t dummyBuffer [1];
 
 	while (res != 0) {
 		sendI2cByteArray(adr,&dummyBuffer[0],0, delay);  // do just a very short delay if desired
-		resetOnError = resOnErrStack;
+//		resetOnError = resOnErrStack;
 	}
     return res;
 }
@@ -368,7 +394,8 @@ INT8U initI2c()
 {
 
 	i2cInitialized = 0;
-	resetOnError = 1;
+//	resetOnError = 1;
+	resetOnError = 0;
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
 	INT8U err = OS_ERR_NONE;
@@ -391,8 +418,14 @@ INT8U initI2c()
     GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+
     __HAL_RCC_I2C1_CLK_ENABLE();
-    __HAL_I2C_DISABLE(&hi2c1);
+
+       disableI2c();
+     //   	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
+     //     use this block if reset of i2c should be needed
+
+     // //  enableI2c();
 
   hi2c1.Instance = I2C1;
   hi2c1.Init.Timing = 0x80102AFF;
@@ -419,27 +452,27 @@ INT8U initI2c()
   }
   BSP_IntVectSet (I2C1_EV_IRQn,tempixIsrPrioLevel,CPU_INT_KA,I2C1_EV_IRQHandler);
   BSP_IntVectSet (I2C1_ER_IRQn,tempixIsrPrioLevel,CPU_INT_KA,I2C1_ER_IRQHandler);
+
+  BSP_IntEnable(I2C1_EV_IRQn);
+  BSP_IntEnable(I2C1_ER_IRQn);
+
   __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_ERRI | I2C_IT_TCI));
+  __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_STOPI | I2C_IT_NACKI));
+  __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_STOPI | I2C_IT_NACKI));
   __HAL_I2C_AutoEndENABLE(&hi2c1);
+
 #ifdef i2cUseDma
   i2cDmaInit();
 #else
   __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_RXI | I2C_IT_TXI));
 #endif
 
+  enableI2c();
   i2cInitialized = 1;
   return err; // error return does not really make sense.....
 }
 
-void enableI2c()
-{
-	 __HAL_I2C_ENABLE(&hi2c1);
-}
 
-void disableI2c()
-{
-	__HAL_I2C_DISABLE(&hi2c1);
-}
 
 void reInitI2cAfterError()   // called from backgroundEventQ
 {

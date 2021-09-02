@@ -8,9 +8,9 @@
             <file>file:/D:/petersData/ST/workspace/tempix-03/tempixTerminal/tempixTerminalWorkspace/tempixTerminal/src/tempixTerminalPackage/SerialCommsController.java</file>
         </group>
         <group>
-            <file>file:/home/peetz/projects/stm32/workspaceBeta/tempix-03/tempixTerminal/tempixTerminalWorkspace/tempixTerminal/src/tempixTerminalPackage/CommDialog.java</file>
-            <file>file:/home/peetz/projects/stm32/workspaceBeta/tempix-03/tempixTerminal/tempixTerminalWorkspace/tempixTerminal/src/tempixTerminalPackage/JSerialCommsController.java</file>
-            <file>file:/home/peetz/projects/stm32/workspaceBeta/tempix-03/tempixTerminal/tempixTerminalWorkspace/tempixTerminal/src/tempixTerminalPackage/TempixTerminal.java</file>
+            <file>file:/home/peetz/projects/stm32/tempix/tempix-03/tempixTerminal/tempixTerminalWorkspace/tempixTerminal/src/tempixTerminalPackage/TempixTerminal.java</file>
+            <file>file:/home/peetz/projects/stm32/tempix/tempix-03/tempixTerminal/tempixTerminalWorkspace/tempixTerminal/src/tempixTerminalPackage/JSerialCommsController.java</file>
+            <file>file:/home/peetz/projects/stm32/tempix/tempix-03/tempixTerminal/tempixTerminalWorkspace/tempixTerminal/src/tempixTerminalPackage/CommDialog.java</file>
         </group>
     </open-files>
 </project-private>

@@ -12,7 +12,7 @@
 #include <uosii-includes.h>
 #include <throttleActuator.h>
 
-#define eepromI2cAdr   0x00
+#define eepromI2cAdr   0x50
 
 
 int8_t m_started;
@@ -27,7 +27,7 @@ OS_EVENT *i2cTransactionSem;
 
 enum valuesToSave
 {
-	kPTot,
+	kTot,
 	kP,
 	kI,
 	kD,
@@ -80,7 +80,6 @@ INT8U transmitEepromByteArray(INT8U i2cAdr,INT8U memAdr, INT8U* pString,INT8U am
 		}
 	}  else {
 		res = semErr;
-		res = OSSemPost(i2cTransactionSem);
 	}
 	return res;
 }
@@ -98,7 +97,7 @@ void initEeprom()
 
 
 const eepromAccessor eepromAx[amtEepromAccessors] = {
-    {kPTot, 0,lenOfReal},
+    {kTot, 0,lenOfReal},
     {kP, 1 * lenOfReal,lenOfReal},
 	{kI, 2* lenOfReal, lenOfReal },
 	{kD ,3 * lenOfReal ,lenOfReal },
@@ -147,7 +146,7 @@ uint8_t restoreReal(real* result, uint8_t realInd )
 uint8_t restorePersistentValues()
 {
 	uint8_t err;
-	err = restoreReal(&m_kPTot,kPTot);
+	err = restoreReal(&m_kPTot,kTot);
 	err |= restoreReal(&m_kP, kP);
 	err |= restoreReal(&m_kI, kI);
 	err |= restoreReal(&m_kD, kD);
@@ -158,7 +157,7 @@ uint8_t restorePersistentValues()
 
 uint32_t   desiredSpeedInv, actualSpeedInv;
 
-uint8_t    resetOnError;
+//uint8_t    resetOnError;
 
 #define correctionThreshold  30
 

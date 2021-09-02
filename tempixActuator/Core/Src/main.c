@@ -20,6 +20,8 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include "canRelated.h"
+#include <stm32f1xx_hal_can.h>
+#include <stm32f1xx_hal_def.h>
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -70,6 +72,8 @@ static void MX_CAN_Init(void);
   * @brief  The application entry point.
   * @retval int
   */
+
+
 int main(void)
 {
   /* USER CODE BEGIN 1 */
@@ -185,6 +189,7 @@ static void MX_CAN_Init(void)
 
   /* USER CODE BEGIN CAN_Init 1 */
 
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
 	/**CAN1 GPIO Configuration
 	PA11     ------> CAN1_RX
@@ -194,12 +199,12 @@ static void MX_CAN_Init(void)
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
 	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_HIGH;
-	GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+//	GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
 	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
   /* USER CODE END CAN_Init 1 */
   hcan.Instance = CAN1;
-  hcan.Init.Prescaler = 48;
+  hcan.Init.Prescaler =  16; //   48;
   hcan.Init.Mode = CAN_MODE_NORMAL;
   hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
   hcan.Init.TimeSeg1 = CAN_BS1_3TQ;
@@ -214,7 +219,28 @@ static void MX_CAN_Init(void)
   {
     Error_Handler();
   }
-  /* USER CODE BEGIN CAN_Init 2 */
+  /*
+   *
+   *   from testProject:
+   *   hcan.Instance = CAN1;
+  hcan.Init.Prescaler = 16;
+  hcan.Init.Mode = CAN_MODE_NORMAL;
+  hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
+  hcan.Init.TimeSeg1 = CAN_BS1_1TQ;
+  hcan.Init.TimeSeg2 = CAN_BS2_3TQ;
+  hcan.Init.TimeTriggeredMode = DISABLE;
+  hcan.Init.AutoBusOff = DISABLE;
+  hcan.Init.AutoWakeUp = DISABLE;
+  hcan.Init.AutoRetransmission = DISABLE;
+  hcan.Init.ReceiveFifoLocked = DISABLE;
+  hcan.Init.TransmitFifoPriority = DISABLE;
+  if (HAL_CAN_Init(&hcan) != HAL_OK)
+  {
+    Error_Handler();
+  }
+   *
+   *
+   * USER CODE BEGIN CAN_Init 2 */
 
   HAL_NVIC_SetPriority(CAN1_TX_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);
