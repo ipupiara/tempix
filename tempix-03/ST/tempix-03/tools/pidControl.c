@@ -23,7 +23,7 @@ real  m_integral, m_prev_error, m_inv_stepTime, corrCarryOver;    //  non persis
 //  eclipse linkage diddle doodle almost impossible without fanatic knowlegde of this
 //  eclipse thing
 
-OS_EVENT *i2cTransactionSem;
+//OS_EVENT *i2cTransactionSem;
 
 enum valuesToSave
 {
@@ -65,9 +65,9 @@ uint8_t  setEepromAddress(INT8U i2cAdr,INT8U memAdr)
 INT8U transmitEepromByteArray(INT8U i2cAdr,INT8U memAdr, INT8U* pString,INT8U amtChars, uint8_t doStore)
 {
 	uint8_t res = 0;
-	uint8_t semErr;
+	uint8_t semErr = OS_ERR_NONE;
 
-	OSSemPend(i2cTransactionSem, 2803, &semErr);
+//	OSSemPend(i2cTransactionSem, 2803, &semErr);  todo check what this is for ???
 	memset(pString,0,amtChars);
 	if (semErr == OS_ERR_NONE) {
 		res = setEepromAddress(i2cAdr,memAdr);
@@ -88,7 +88,7 @@ void initEeprom()
 {
 	uint8_t err = OS_ERR_NONE;
 	if (err == OS_ERR_NONE) {
-		 i2cTransactionSem = OSSemCreate(1);
+//		 i2cTransactionSem = OSSemCreate(1);
 	}
 }
 

@@ -85,3 +85,13 @@ void i2cSendStop(I2C_HandleTypeDef *hi2c)
 	WRITE_REG(hi2c->Instance->CR2, ((uint32_t)1U << I2C_CR2_STOP_Pos));
 }
 
+void enableAllDmaInterrupts(DMA_HandleTypeDef* hdma, INT8U exceptHT)
+{
+	__HAL_DMA_ENABLE_IT(hdma,DMA_IT_TC);
+	if (exceptHT != withoutHT) {
+		__HAL_DMA_ENABLE_IT(hdma,DMA_IT_HT);
+	}
+	__HAL_DMA_ENABLE_IT(hdma,DMA_IT_TE);
+	__HAL_DMA_ENABLE_IT(hdma,DMA_IT_FE);
+	__HAL_DMA_ENABLE_IT(hdma,DMA_IT_DME);
+}

@@ -7,7 +7,7 @@
 #include <main.h>
 #include <uart-comms.h>
 
-
+#define I2C_FLAG_NACKF   I2C_FLAG_AF
 
 OS_EVENT *i2cResourceSem;
 
@@ -121,8 +121,7 @@ void DMA1_Stream6_IRQHandler(void)
 	CPU_CRITICAL_EXIT();
 
 	if (__HAL_DMA_GET_FLAG(&hdma_i2c1_tx,DMA_FLAG_TCIF2_6) != 0)  {
-//		transferBuffer();
-//		i2cFinishedOk();
+		i2cFinishedOk();
 		__HAL_DMA_CLEAR_FLAG(&hdma_i2c1_tx,DMA_FLAG_TCIF2_6);
 	}
 
@@ -188,12 +187,14 @@ void i2cDmaInit()
 
 	  BSP_IntVectSet (DMA1_Stream0_IRQn,tempixIsrPrioLevel,CPU_INT_KA,DMA1_Stream0_IRQHandler);
 	  BSP_IntVectSet (DMA1_Stream6_IRQn,tempixIsrPrioLevel,CPU_INT_KA,DMA1_Stream6_IRQHandler);
+	  BSP_IntEnable(DMA1_Stream0_IRQn);
+	  BSP_IntEnable(DMA1_Stream6_IRQn);
 
 	clearDmaInterruptFlags(&hdma_i2c1_tx);
 	clearDmaInterruptFlags(&hdma_i2c1_rx);
+	enableAllDmaInterrupts(&hdma_i2c1_tx,withoutHT);
+	enableAllDmaInterrupts(&hdma_i2c1_rx,withoutHT);
 
-	BSP_IntEnable(DMA1_Stream0_IRQn);
-	BSP_IntEnable(DMA1_Stream6_IRQn);
 }
 
 #else
@@ -272,6 +273,10 @@ void I2C1_EV_IRQHandler(void)
 #endif
 	if ((itflags & I2C_FLAG_TC) != 0)  {
 		i2cFinishedOk();
+	}
+	if (((itflags & I2C_FLAG_STOPF) != 0)| ((itflags & I2C_FLAG_NACKF) != 0) )  {
+		__HAL_I2C_CLEAR_FLAG(hi2c, I2C_FLAG_STOPF);
+		__HAL_I2C_CLEAR_FLAG(hi2c, I2C_FLAG_NACKF);
 	}
 }
 
@@ -458,7 +463,7 @@ INT8U initI2c()
 
   __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_ERRI | I2C_IT_TCI));
   __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_STOPI | I2C_IT_NACKI));
-  __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_STOPI | I2C_IT_NACKI));
+//  __HAL_I2C_ENABLE_IT(&hi2c1,(I2C_IT_STOPI | I2C_IT_NACKI));
   __HAL_I2C_AutoEndENABLE(&hi2c1);
 
 #ifdef i2cUseDma

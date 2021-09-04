@@ -332,6 +332,11 @@
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/dma-tools.c</locationURI>
 		</link>
 		<link>
+			<name>ST/tempix-03/tools/dma-tools.h</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/dma-tools.h</locationURI>
+		</link>
+		<link>
 			<name>ST/tempix-03/tools/gpioSupport.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/gpioSupport.c</locationURI>
@@ -340,11 +345,6 @@
 			<name>ST/tempix-03/tools/gpioSupport.h</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/gpioSupport.h</locationURI>
-		</link>
-		<link>
-			<name>ST/tempix-03/tools/i2c.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/i2c.c</locationURI>
 		</link>
 		<link>
 			<name>ST/tempix-03/tools/i2c.h</name>
@@ -495,11 +495,6 @@
 			<name>ST/STM32F756ZG_Nucleo/tempix-03/OS2/app_hooks.c</name>
 			<type>1</type>
 			<locationURI>PARENT-1-PROJECT_LOC/app_hooks.c</locationURI>
-		</link>
-		<link>
-			<name>ST/STM32F756ZG_Nucleo/tempix-03/OS2/dma-tools.h</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/dma-tools.h</locationURI>
 		</link>
 		<link>
 			<name>ST/STM32F756ZG_Nucleo/tempix-03/OS2/main.c</name>
@@ -1165,6 +1160,11 @@
 			<name>ST/BSP/SDK/STM32CubeF7/Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_ll_wwdg.h</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/BSP/SDK/STM32CubeF7/Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_ll_wwdg.h</locationURI>
+		</link>
+		<link>
+			<name>ST/BSP/SDK/STM32CubeF7/Drivers/STM32F7xx_HAL_Driver/Src/i2c.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/i2c.c</locationURI>
 		</link>
 		<link>
 			<name>ST/BSP/SDK/STM32CubeF7/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.c</name>

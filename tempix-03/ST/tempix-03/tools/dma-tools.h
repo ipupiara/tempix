@@ -10,11 +10,18 @@
 #define __HAL_I2C_RxDmaENABLE(__HANDLE__)  (SET_BIT((__HANDLE__)->Instance->CR1,  I2C_CR1_RXDMAEN))
 #define __HAL_I2C_AutoEndENABLE(__HANDLE__)  (SET_BIT((__HANDLE__)->Instance->CR2,  I2C_CR2_AUTOEND ))
 
+enum {
+	withoutHT = 0,
+	withHT
+};
+
 INT16U  feCounter;
 INT16U  teCounter;
 INT16U  dmeCounter;
 
 void incDMAErrorCounter(DMA_HandleTypeDef *hdma);
+
+void enableAllDmaInterrupts(DMA_HandleTypeDef* hdma, INT8U exceptHT);
 
 void clearDmaInterruptFlags(DMA_HandleTypeDef *hdma);
 

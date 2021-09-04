@@ -24,10 +24,7 @@ UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_tx;
 DMA_HandleTypeDef hdma_usart1_rx;
 
-enum {
-	withoutHT = 0,
-	withHT
-};
+
 
 enum {
 	fromHalfTransferCompleteIsr = 1,
@@ -188,16 +185,7 @@ static void USART1_IRQHandler(void)
      }
 }
 
-void enableAllDmaInterrupts(DMA_HandleTypeDef* hdma, INT8U exceptHT)
-{
-	__HAL_DMA_ENABLE_IT(hdma,DMA_IT_TC);
-	if (exceptHT != withoutHT) {
-		__HAL_DMA_ENABLE_IT(hdma,DMA_IT_HT);
-	}
-	__HAL_DMA_ENABLE_IT(hdma,DMA_IT_TE);
-	__HAL_DMA_ENABLE_IT(hdma,DMA_IT_FE);
-	__HAL_DMA_ENABLE_IT(hdma,DMA_IT_DME);
-}
+
 
 void DMA2_Stream2_IRQHandler(void)   // RX
 {
