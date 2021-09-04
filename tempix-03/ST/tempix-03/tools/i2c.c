@@ -232,8 +232,12 @@ void establishContactAndRun()
 #ifdef i2cUseDma
 	if (i2cJobData.jobType == sendI2c) {
 		DMA_SetTransferConfig(&hdma_i2c1_tx,(uint32_t)i2cJobData.buffer,(uint32_t)&hi2c1.Instance->TXDR,i2cJobData.amtChars);
+		clearDmaInterruptFlags(&hdma_i2c1_tx);
+		__HAL_DMA_ENABLE(&hdma_i2c1_tx);
 	} else {
 		DMA_SetTransferConfig(&hdma_i2c1_rx,(uint32_t)&hi2c1.Instance->RXDR,(uint32_t)i2cJobData.buffer,i2cJobData.amtChars);
+		clearDmaInterruptFlags(&hdma_i2c1_rx);
+		__HAL_DMA_ENABLE(&hdma_i2c1_rx);
 	}
 #endif
 	i2cTransferConfig(&hi2c1,i2cJobData.address,i2cJobData.amtChars,(i2cJobData.jobType == receiveI2c ? 1:0));
