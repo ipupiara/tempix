@@ -18,6 +18,7 @@ OS_EVENT *i2cJobSem;
 I2C_HandleTypeDef hi2c1;
 
 uint8_t  transmitErrorCollectorInt8u;
+uint8_t  jobSemSet;
 
 //OS_STK  i2cMethodStk[APP_CFG_DEFAULT_TASK_STK_SIZE];
 
@@ -43,7 +44,14 @@ i2cJobDataType i2cJobData;
 void setI2cJobSema()
 {
 	INT8U err;
-	OSSemSet(i2cJobSem,1,&err);
+//	OSSemSet(i2cJobSem,1,&err);
+	if (jobSemSet == 0)  {    // prevent multiple events by irqs
+		err = OSSemPost(i2cJobSem);
+		jobSemSet = 1;
+		if (err != 0)  {
+			jobSemSet = 2;  //  just for debugging
+		}
+	}
 }
 
 void i2cFinishedOk()
@@ -275,8 +283,9 @@ void I2C1_EV_IRQHandler(void)
 		i2cFinishedOk();
 	}
 	if (((itflags & I2C_FLAG_STOPF) != 0)| ((itflags & I2C_FLAG_NACKF) != 0) )  {
-		__HAL_I2C_CLEAR_FLAG(hi2c, I2C_FLAG_STOPF);
-		__HAL_I2C_CLEAR_FLAG(hi2c, I2C_FLAG_NACKF);
+		__HAL_I2C_CLEAR_FLAG(&hi2c1, I2C_FLAG_STOPF);
+		__HAL_I2C_CLEAR_FLAG(&hi2c1, I2C_FLAG_NACKF);
+		  i2cError(0x96);
 	}
 }
 
@@ -336,6 +345,7 @@ INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U 
 		if (semErr == OS_ERR_NONE) {
 			transmitErrorCollectorInt8u = OS_ERR_NONE;
 			OSSemSet(i2cJobSem,0,&semErr);  // debug: be sure it was not set multiple times at last end of transfer..
+			jobSemSet = 0;
 			i2cJobData.buffer = pResultString;
 			i2cJobData.amtChars = amtChars;
 			i2cJobData.bufferCnt = 0;

@@ -55,10 +55,12 @@ uint8_t  setEepromAddress(INT8U i2cAdr,INT8U memAdr)
 	uint8_t res = 0;
 	uint8_t byteArr [1];
 	byteArr[0] = memAdr;
-	res = sendI2cByteArray(i2cAdr, &byteArr[0], 1, 0);
-	if (res == 0) {
-		pollForReady(i2cAdr, 0);  // todo test if this is even needed here, without something to write
-	}
+	do {
+		res = sendI2cByteArray(i2cAdr, &byteArr[0], 1, 0);
+		if (res == 0) {
+			pollForReady(i2cAdr, 0);  // todo test if this is even needed here, without something to write
+		}
+	} while (1);
 	return res;
 }
 
