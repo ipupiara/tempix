@@ -289,7 +289,7 @@ void I2C1_EV_IRQHandler(void)
 	if (((itflags & I2C_FLAG_STOPF) != 0)| ((itflags & I2C_FLAG_NACKF) != 0) )  {
 		__HAL_I2C_CLEAR_FLAG(&hi2c1, I2C_FLAG_STOPF);
 		__HAL_I2C_CLEAR_FLAG(&hi2c1, I2C_FLAG_NACKF);
-		  i2cError(0x96);
+		  i2cError(0x77);
 	}
 }
 
@@ -387,9 +387,9 @@ INT8U sendI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars, uint8_t delayMs)
 	return transmitI2cByteArray(adr, pString, amtChars, 1, delayMs);
 }
 
-INT8U receiveI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars)
+INT8U receiveI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars, uint8_t delayMs)
 {
-	return transmitI2cByteArray(adr, pString, amtChars, 0, 0);
+	return transmitI2cByteArray(adr, pString, amtChars, 0, delayMs);
 }
 
 

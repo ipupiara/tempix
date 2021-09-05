@@ -56,7 +56,8 @@ uint8_t  setEepromAddress(INT8U i2cAdr,INT8U memAdr)
 	uint8_t byteArr [1];
 	byteArr[0] = memAdr;
 	do {
-		res = sendI2cByteArray(i2cAdr, &byteArr[0], 1, 1);   // set 1 ms delay for debugging in the do while loop
+		res = receiveI2cByteArray(i2cAdr, &byteArr[0], 1, 1);   // just once used for debugging
+//		res = sendI2cByteArray(i2cAdr, &byteArr[0], 1, 1);   // set 1 ms delay for debugging in the do while loop
 		if (res == 0) {
 			pollForReady(i2cAdr, 0);  // todo test if this is even needed here, without something to write
 		}
@@ -77,7 +78,7 @@ INT8U transmitEepromByteArray(INT8U i2cAdr,INT8U memAdr, INT8U* pString,INT8U am
 			if (doStore) {
 				res = sendI2cByteArray(i2cAdr, pString, amtChars, 0);
 			}  else {
-				res= receiveI2cByteArray(i2cAdr, pString, amtChars);
+				res= receiveI2cByteArray(i2cAdr, pString, amtChars,0);
 			}
 		}
 	}  else {
