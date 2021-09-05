@@ -352,6 +352,11 @@
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/i2c.h</locationURI>
 		</link>
 		<link>
+			<name>ST/tempix-03/tools/i2c.c</name>
+			<type>1</type>
+			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/i2c.c</locationURI>
+		</link>
+		<link>
 			<name>ST/tempix-03/tools/pidControl.c</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/pidControl.c</locationURI>
@@ -1160,11 +1165,6 @@
 			<name>ST/BSP/SDK/STM32CubeF7/Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_ll_wwdg.h</name>
 			<type>1</type>
 			<locationURI>PARENT-4-PROJECT_LOC/BSP/SDK/STM32CubeF7/Drivers/STM32F7xx_HAL_Driver/Inc/stm32f7xx_ll_wwdg.h</locationURI>
-		</link>
-		<link>
-			<name>ST/BSP/SDK/STM32CubeF7/Drivers/STM32F7xx_HAL_Driver/Src/i2c.c</name>
-			<type>1</type>
-			<locationURI>PARENT-4-PROJECT_LOC/tempix-03/tools/i2c.c</locationURI>
 		</link>
 		<link>
 			<name>ST/BSP/SDK/STM32CubeF7/Drivers/STM32F7xx_HAL_Driver/Src/stm32f7xx_hal.c</name>

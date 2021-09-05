@@ -98,6 +98,10 @@ void  BSP_ClkInit (void)
     HAL_StatusTypeDef   hal_status;
     RCC_PeriphCLKInitTypeDef PeriphClkInitStruct = {0};
 
+    /** Configure the main internal regulator output voltage
+    */
+    __HAL_RCC_PWR_CLK_ENABLE();
+    __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);  //  copied from ioc generator code
 
                                                                 /* Enable HSE Osc and activate PLL with HSE as source   */
     RCC_OscInit.OscillatorType = RCC_OSCILLATORTYPE_HSE;        /* HSE = 8 MHz                                          */
@@ -140,10 +144,15 @@ void  BSP_ClkInit (void)
 
 	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_USART1;
 	PeriphClkInitStruct.Usart1ClockSelection = RCC_USART1CLKSOURCE_SYSCLK;
-	PeriphClkInitStruct.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
 	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
 	{
 		 while(1u);
+	}
+	PeriphClkInitStruct.PeriphClockSelection = RCC_PERIPHCLK_I2C1;
+	PeriphClkInitStruct.I2c1ClockSelection = RCC_I2C1CLKSOURCE_PCLK1;
+	if (HAL_RCCEx_PeriphCLKConfig(&PeriphClkInitStruct) != HAL_OK)
+	{
+		while(1u);
 	}
 }
 

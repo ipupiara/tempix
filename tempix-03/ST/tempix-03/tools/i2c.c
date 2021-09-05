@@ -209,7 +209,7 @@ void i2cDmaInit()
 
 void sendNextI2CByte()
 {
-	if (i2cJobData.bufferCnt < i2cJobData.bufferSize) {
+	if (i2cJobData.bufferCnt < i2cJobData.amtChars) {
 		hi2c1.Instance->TXDR = i2cJobData.buffer[i2cJobData.bufferCnt];
 		++i2cJobData.bufferCnt;
 	}
@@ -217,7 +217,7 @@ void sendNextI2CByte()
 
 void receiveNextI2CByte()
 {
-	if (i2cJobData.bufferCnt < i2cJobData.bufferSize) {
+	if (i2cJobData.bufferCnt < i2cJobData.amtChars) {
 			i2cJobData.buffer[i2cJobData.bufferCnt] = hi2c1.Instance->RXDR ;
 			++i2cJobData.bufferCnt;
 	}
@@ -447,7 +447,7 @@ INT8U initI2c()
      // //  enableI2c();
 
   hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x80102AFF;
+  hi2c1.Init.Timing = 0x20404768;
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;

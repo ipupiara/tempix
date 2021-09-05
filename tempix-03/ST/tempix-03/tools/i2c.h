@@ -3,7 +3,7 @@
 
 #include <uosii-includes.h>
 
-#define i2cUseDma
+//#define i2cUseDma
 
 /*
  *
