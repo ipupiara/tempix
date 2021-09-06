@@ -251,8 +251,8 @@ void calcNextTriacDelay()
 
 void initPid()
 {
-	restorePersistentValues();
 	InitializePID();
+	restorePersistentValues();
 }
 
 void triggerNextPid()

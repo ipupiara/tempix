@@ -425,6 +425,7 @@ INT8U initI2c()
 		 i2cResourceSem = OSSemCreate(1);
 	}
 
+	__HAL_RCC_GPIOH_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
     /**I2C1 GPIO Configuration
     PB6     ------> I2C1_SCL
