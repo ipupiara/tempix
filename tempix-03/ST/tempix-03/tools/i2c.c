@@ -59,6 +59,10 @@ void i2cFinishedOk()
 	setI2cJobSema();
 }
 
+void flushTXEempty(I2C_HandleTypeDef *hdma)
+{
+	SET_BIT((hdma)->Instance->ISR,I2C_ISR_TXE  );
+}
 
 void i2cError(INT8U err)
 {
@@ -427,10 +431,11 @@ INT8U initI2c()
 
 	__HAL_RCC_GPIOH_CLK_ENABLE();
     __HAL_RCC_GPIOB_CLK_ENABLE();
-    /**I2C1 GPIO Configuration
+/*
+    //  I2C1 GPIO Configuration
     PB6     ------> I2C1_SCL
     PB7     ------> I2C1_SDA
-    */
+
     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
@@ -438,6 +443,7 @@ INT8U initI2c()
     GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
+*/
 
     __HAL_RCC_I2C1_CLK_ENABLE();
 
