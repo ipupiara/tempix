@@ -174,8 +174,8 @@ static  void  StartupTask (void *p_arg)
 	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
 	printStartMessage();
 
-    initI2c();
-    initEeprom();
+//    initI2c();   did not work so far..... no big chance ....
+//    initEeprom();
 
 //	startTempixStateChart();
 //	initGpioSupport();

@@ -244,7 +244,12 @@ void establishContactAndRun()
 		__HAL_DMA_ENABLE(&hdma_i2c1_rx);
 	}
 #endif
+
 	i2cTransferConfig(&hi2c1,i2cJobData.address,i2cJobData.amtChars,(i2cJobData.jobType == receiveI2c ? 1:0));
+//	hi2c1.Instance->TXDR = (i2cJobData.address << 1);
+//	if (i2cJobData.jobType == receiveI2c) {
+//		hi2c1.Instance->TXDR |= 0x01;
+//	}   did also not work ..... ???????
 	i2cSendStart(&hi2c1);
 }
 
@@ -435,7 +440,7 @@ INT8U initI2c()
     //  I2C1 GPIO Configuration
     PB6     ------> I2C1_SCL
     PB7     ------> I2C1_SDA
-
+*/
     GPIO_InitStruct.Pin = GPIO_PIN_6|GPIO_PIN_7;
     GPIO_InitStruct.Mode = GPIO_MODE_AF_OD;
     GPIO_InitStruct.Pull = GPIO_PULLUP;
@@ -443,7 +448,7 @@ INT8U initI2c()
     GPIO_InitStruct.Alternate = GPIO_AF4_I2C1;
     HAL_GPIO_Init(GPIOB, &GPIO_InitStruct);
 
-*/
+
 
     __HAL_RCC_I2C1_CLK_ENABLE();
 
