@@ -182,7 +182,7 @@ static  void  StartupTask (void *p_arg)
 //	initAdc();
 //	initCanComms();
 //	initServoControl();
-	initPid();
+//	initPid();
 
 
 #if (OS_TASK_STAT_EN > 0u)
