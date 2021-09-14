@@ -16,12 +16,12 @@ OS_EVENT *canQSem;
 
 
 
-uint8_t syncSendTempixSimpleCommand(uint32_t sId, TempixSimpleCommand scmd)
+uint8_t syncSendTempixSimpleCommand( TempixSimpleCommand* scmd)
 {
 	uint8_t err = 1;
 	OSSemPend(canQSem, 0, &err);
 	if (err == OS_ERR_NONE ) {
-		if ( sendCanTempixSimpleCommand(&hcan1, sId, scmd) == 1) {
+		if ( sendCanTempixSimpleCommand(&hcan1, scmd) == 1) {
 			err = 0;
 		}
 		OSSemPost(canQSem);
@@ -427,4 +427,14 @@ void initCanComms()
 	_CAN_Init(&hcan1);
 	HAL_CAN_Start(&hcan1);
 	initCanFilters();
+}
+
+void sendCanTestMessage()
+{
+	TempixSimpleCommand scmd;
+	scmd.commandId = controllerPingRequest;
+	scmd.commandData1 = 0x5a5a5a5a;
+	scmd.commandData2 = 0xFF00FF0F;
+
+	syncSendTempixSimpleCommand( &scmd);
 }

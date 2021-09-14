@@ -29,8 +29,8 @@
 typedef struct
 {
 	uint32_t   commandId;
-	uint32_t   commandType;
-	uint32_t   commandData;
+	uint32_t   commandData1;
+	uint32_t   commandData2;
 }  TempixSimpleCommand;
 
 void Install_Error_Handler();
@@ -41,6 +41,6 @@ uint8_t isCanMessageType(CAN_RxHeaderTypeDef *pHeader   , uint32_t msgT);
 
 uint8_t addTxMessage(CAN_HandleTypeDef *hcan, CAN_TxHeaderTypeDef *pHeader, uint8_t aData[]);
 
-uint8_t sendCanTempixSimpleCommand(CAN_HandleTypeDef* pCan, uint32_t stdID, TempixSimpleCommand scmd);
+uint8_t sendCanTempixSimpleCommand(CAN_HandleTypeDef* pCan, TempixSimpleCommand* scmd);
 
 #endif

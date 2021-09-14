@@ -5,8 +5,9 @@
 #include <canRelated.h>
 
 void initCanComms();
+void sendCanTestMessage();;
 
 
-uint8_t syncSendTempixSimpleCommand(uint32_t sId, TempixSimpleCommand scmd);
+uint8_t syncSendTempixSimpleCommand( TempixSimpleCommand* scmd);
 
 #endif

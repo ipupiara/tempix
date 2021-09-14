@@ -246,10 +246,10 @@ void establishContactAndRun()
 #endif
 
 	i2cTransferConfig(&hi2c1,i2cJobData.address,i2cJobData.amtChars,(i2cJobData.jobType == receiveI2c ? 1:0));
-//	hi2c1.Instance->TXDR = (i2cJobData.address << 1);
-//	if (i2cJobData.jobType == receiveI2c) {
-//		hi2c1.Instance->TXDR |= 0x01;
-//	}   did also not work ..... ???????
+	hi2c1.Instance->TXDR = (i2cJobData.address << 1);
+	if (i2cJobData.jobType == receiveI2c) {
+		hi2c1.Instance->TXDR |= 0x01;
+	}  // did also not work ..... ???????
 	i2cSendStart(&hi2c1);
 }
 
@@ -451,7 +451,9 @@ INT8U initI2c()
 
 
     __HAL_RCC_I2C1_CLK_ENABLE();
-
+//    __HAL_RCC_I2C2_CLK_ENABLE();
+//    __HAL_RCC_I2C3_CLK_ENABLE();
+//    __HAL_RCC_I2C4_CLK_ENABLE();
        disableI2c();
      //   	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
      //     use this block if reset of i2c should be needed

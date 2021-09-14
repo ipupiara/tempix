@@ -174,15 +174,18 @@ static  void  StartupTask (void *p_arg)
 	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
 	printStartMessage();
 
-//    initI2c();   did not work so far..... no big chance ....
-//    initEeprom();
+//    initI2c();  // did not work so far..... no big chance ....
+//    initEeprom();   //  does not send slave address and rd-wr bit
+//	initPid();			//  stm32 sample programs do not run at all,
+						//  stm32 samples are obviousely done for an other hardware
+						//  though ii2c-eeprom is made for stm32F756xx  !!!!!!!  not understand
 
 //	startTempixStateChart();
 //	initGpioSupport();
 //	initAdc();
-//	initCanComms();
+	initCanComms();
 //	initServoControl();
-//	initPid();
+
 
 
 #if (OS_TASK_STAT_EN > 0u)
@@ -200,6 +203,11 @@ static  void  StartupTask (void *p_arg)
         } else {
         	BSP_LED_Off(USER_LD3);
         }
+        while (1)  {
+        	sendCanTestMessage();
+        	OSTimeDlyHMSM(0, 0, 0, 2);
+        }
+
       	bgEvPtr = (backGroundEvent *)OSQPend(backGroundEventTaskQ, 1009, &err);
        	if (err == OS_ERR_NONE) {
        		switch (bgEvPtr->evType) {                /* See if we timed-out or aborted                */
@@ -207,16 +215,16 @@ static  void  StartupTask (void *p_arg)
 					forwardReceivedStringBuffer(bgEvPtr->evData.uartString);
 					break;
 				case i2cReinitNeeded:
-					OSTimeDlyHMSM(0, 0, 0, 2);
-					reInitI2cAfterError();
+//					OSTimeDlyHMSM(0, 0, 0, 2);
+//					reInitI2cAfterError();
 					 break;
 				default:
 					info_printf("backGroundEvent %i not handled.\n",bgEvPtr->evType);
 					break;
        		}
        	}
-       	if (i2cInitialized == 0)  {  // poll for this here, because else i2c will no longer work
-       		reInitI2cAfterError();
-       	}
+//       	if (i2cInitialized == 0)  {  // poll for this here, because else i2c will no longer work
+//       		reInitI2cAfterError();
+//       	}
     }
 }

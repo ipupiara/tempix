@@ -89,15 +89,15 @@ uint8_t  sendCanData(CAN_HandleTypeDef* pCan, uint32_t stdID, uint8_t aData[])
 	return res;
 }
 
-uint8_t sendCanTempixSimpleCommand(CAN_HandleTypeDef* pCan, uint32_t stdID, TempixSimpleCommand scmd)
+uint8_t sendCanTempixSimpleCommand(CAN_HandleTypeDef* pCan,  TempixSimpleCommand* scmd)
 {
 	uint8_t res = 0;
 	uint8_t msgData[8];
-	memcpy(msgData,&scmd.commandType,4);
-	memcpy(&msgData[4],&scmd.commandData,4);
+	memcpy(msgData,&scmd->commandData1,4);  // tobe tested
+	memcpy(&msgData[4],&scmd->commandData2,4);
 
 
-	res = sendCanData(pCan, stdID, msgData);
+	res = sendCanData(pCan, scmd->commandId, msgData);
 	return res;
 }
 
