@@ -417,8 +417,23 @@ uint8_t pollForReady(INT8U adr, uint8_t delay)
     return res;
 }
 
+INT8U initI2c2()
+{
+	// copy all needed from cubemx  (except interrupts since we only want clocks , gpio and i2c configured and enabled)
+	// methods intended for debugging nasty i2c problem
+}
 
-INT8U initI2c()
+INT8U initI2c3()
+{
+
+}
+
+INT8U initI2c4()
+{
+
+}
+
+INT8U initI2c1()
 {
 
 	i2cInitialized = 0;
@@ -505,14 +520,17 @@ INT8U initI2c()
   return err; // error return does not really make sense.....
 }
 
-
+void initI2c()
+{
+	initI2c1();
+}
 
 void reInitI2cAfterError()   // called from backgroundEventQ
 {
 	INT8U err = OS_ERR_NONE;
 	OSSemDel(i2cJobSem, OS_DEL_ALWAYS, &err);
 	OSSemDel(i2cResourceSem, OS_DEL_ALWAYS, &err);
-	initI2c();
+	initI2c1();
 }
 
 
