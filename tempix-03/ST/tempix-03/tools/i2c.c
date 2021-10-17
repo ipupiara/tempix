@@ -489,6 +489,12 @@ INT8U initI2c1()
 	  i2cError(0x87);
   }
 
+
+  //  todo disable filters since they produce delay, check clk conditions
+  //    (30.4.2  I2C clock requirements,30.4.4  I2C initialization-->I2C timings ff)
+  //
+
+
   if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
   {
 	  i2cError(0x88);

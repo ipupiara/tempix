@@ -1,6 +1,7 @@
 ﻿echo on
 
 
+
 echo .
 echo git add files to commmit ... 
 echo allways the same files to add, so best put it in a batch file, 
