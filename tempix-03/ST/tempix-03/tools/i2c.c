@@ -417,21 +417,13 @@ uint8_t pollForReady(INT8U adr, uint8_t delay)
     return res;
 }
 
-INT8U initI2c2()
+INT8U initI2cTo4()
 {
 	// copy all needed from cubemx  (except interrupts since we only want clocks , gpio and i2c configured and enabled)
 	// methods intended for debugging nasty i2c problem
 }
 
-INT8U initI2c3()
-{
 
-}
-
-INT8U initI2c4()
-{
-
-}
 
 INT8U initI2c1()
 {
@@ -490,9 +482,26 @@ INT8U initI2c1()
   }
 
 
-  //  todo disable filters since they produce delay, check clk conditions
-  //    (30.4.2  I2C clock requirements,30.4.4  I2C initialization-->I2C timings ff)
+  //  problem:  i2c works, but address and RW are not forwarded on SDA line, SDA held low
+  //            during address and RW bits.
+  //              as seen on oscilloscope, but releasing SDA line for slave ack bit works
+  //                BUT slave sends NACK (lets SDA high), what produces an
+  //                       nack / stop condition on EV_IRQ
   //
+  //  (PN 18.oct 21) still possible  todo
+  //    disable filters since they produce delay,
+  //    check clk conditions
+  //          (30.4.2  I2C clock requirements,30.4.4  I2C initialization-->I2C timings ff)
+  //
+  //  if this does not help enable i2c2 to 4
+  //      (shift clock for data on SDA line might eventually come from other sources...)
+  //  if this also does not help transfer this very same code as
+  //        close as possible on stm32F103
+  //         (with the minimum needed changes due to hw differences in interface)
+
+  //  if still not running contact stm and check entirely why also their EEPROM i2c example
+  //    specially made for stm32F756..   does not work on stm32F756zg nucleo board  ???
+
 
 
   if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
