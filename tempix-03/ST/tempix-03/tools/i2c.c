@@ -417,7 +417,7 @@ uint8_t pollForReady(INT8U adr, uint8_t delay)
     return res;
 }
 
-INT8U initI2cTo4()
+void initI2cTo4()
 {
 	// copy all needed from cubemx  (except interrupts since we only want clocks , gpio and i2c configured and enabled)
 	// methods intended for debugging nasty i2c problem
@@ -425,7 +425,7 @@ INT8U initI2cTo4()
 
 
 
-INT8U initI2c1()
+uint8_t initI2c1()
 {
 
 	i2cInitialized = 0;

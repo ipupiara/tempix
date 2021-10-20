@@ -103,7 +103,7 @@ void  BSP_ClkInit (void)
     __HAL_RCC_PWR_CLK_ENABLE();
     __HAL_PWR_VOLTAGESCALING_CONFIG(PWR_REGULATOR_VOLTAGE_SCALE1);  //  copied from ioc generator code
 
-                                                                /* Enable HSE Osc and activate PLL with HSE as source   */
+#ifdef useHSEclock                                                               /* Enable HSE Osc and activate PLL with HSE as source   */
     RCC_OscInit.OscillatorType = RCC_OSCILLATORTYPE_HSE;        /* HSE = 8 MHz                                          */
     RCC_OscInit.HSEState       = RCC_HSE_BYPASS;
     RCC_OscInit.HSIState       = RCC_HSI_OFF;
@@ -115,6 +115,19 @@ void  BSP_ClkInit (void)
     RCC_OscInit.PLL.PLLP = RCC_PLLP_DIV2;
     RCC_OscInit.PLL.PLLQ = 2u;
  //   RCC_OscInit.PLL.PLLR = 7u;
+#else
+  #ifdef useHSIclock
+     RCC_OscInit.OscillatorType = RCC_OSCILLATORTYPE_HSI;
+     RCC_OscInit.HSIState = RCC_HSI_ON;
+     RCC_OscInit.HSICalibrationValue = RCC_HSICALIBRATION_DEFAULT;
+     RCC_OscInit.PLL.PLLState = RCC_PLL_ON;
+     RCC_OscInit.PLL.PLLSource = RCC_PLLSOURCE_HSI;
+     RCC_OscInit.PLL.PLLM = 8;
+     RCC_OscInit.PLL.PLLN = 216;
+     RCC_OscInit.PLL.PLLP = RCC_PLLP_DIV2;
+     RCC_OscInit.PLL.PLLQ = 2;
+  #endif
+#endif
 
     if (HAL_RCC_OscConfig(&RCC_OscInit) != HAL_OK) {
         while(1u);                                              /* STOP if error                                        */

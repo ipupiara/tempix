@@ -41,7 +41,7 @@ void incDMAErrorCounter(DMA_HandleTypeDef *hdma)
 void i2cTransferConfig(I2C_HandleTypeDef *hi2c,  uint16_t DevAddress, uint8_t Size,  uint8_t Request)
 {
   MODIFY_REG(hi2c->Instance->CR2, (I2C_CR2_SADD | I2C_CR2_NBYTES | I2C_CR2_RD_WRN ),
-       (uint32_t)(((uint32_t)DevAddress << I2C_CR2_SADD_Pos + 1) | ((uint32_t)Size << I2C_CR2_NBYTES_Pos)  |
+       (uint32_t)(((uint32_t)DevAddress << (I2C_CR2_SADD_Pos + 1)) | ((uint32_t)Size << I2C_CR2_NBYTES_Pos)  |
     		   ((uint32_t)Request)<< I2C_CR2_RD_WRN_Pos));
 }
 
