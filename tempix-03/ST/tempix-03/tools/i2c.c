@@ -17,6 +17,7 @@ OS_EVENT *i2cJobSem;
 
 I2C_HandleTypeDef hi2c1;
 
+
 uint8_t  transmitErrorCollectorInt8u;
 uint8_t  jobSemSet;
 
@@ -391,6 +392,9 @@ INT8U transmitI2cByteArray(INT8U adr,INT8U* pResultString,INT8U amtChars, INT8U 
 	return res;
 }
 
+//  todo delay should not be done on transmit level on i2c side,
+//  but on client side that needs the delay
+//  else traffic will be blocked for all
 INT8U sendI2cByteArray(INT8U adr,INT8U* pString,INT8U amtChars, uint8_t delayMs)
 {
 	return transmitI2cByteArray(adr, pString, amtChars, 1, delayMs);
@@ -421,6 +425,16 @@ void initI2cTo4()
 {
 	// copy all needed from cubemx  (except interrupts since we only want clocks , gpio and i2c configured and enabled)
 	// methods intended for debugging nasty i2c problem
+
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+
+	I2C_HandleTypeDef hi2c2;
+	I2C_HandleTypeDef hi2c3;
+	I2C_HandleTypeDef hi2c4;
+
+	__HAL_RCC_I2C2_CLK_ENABLE();
+	__HAL_RCC_I2C3_CLK_ENABLE();
+	__HAL_RCC_I2C4_CLK_ENABLE();
 }
 
 
@@ -458,9 +472,7 @@ uint8_t initI2c1()
 
 
     __HAL_RCC_I2C1_CLK_ENABLE();
-//    __HAL_RCC_I2C2_CLK_ENABLE();
-//    __HAL_RCC_I2C3_CLK_ENABLE();
-//    __HAL_RCC_I2C4_CLK_ENABLE();
+
        disableI2c();
      //   	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
      //     use this block if reset of i2c should be needed
@@ -468,7 +480,9 @@ uint8_t initI2c1()
      // //  enableI2c();
 
   hi2c1.Instance = I2C1;
-  hi2c1.Init.Timing = 0x20404768;
+//hi2c1.Init.Timing = 0x20404768;  // proposed by mx   FOR 100kHz
+//hi2c1.Init.Timing = 0xC042C3C7;  // proposed by 756 datasheet for 10 kHz
+  hi2c1.Init.Timing = 0xC0426164;	// calculated by 756 datasheet for 50 kHz
   hi2c1.Init.OwnAddress1 = 0;
   hi2c1.Init.AddressingMode = I2C_ADDRESSINGMODE_7BIT;
   hi2c1.Init.DualAddressMode = I2C_DUALADDRESS_DISABLE;
@@ -492,6 +506,7 @@ uint8_t initI2c1()
   //    disable filters since they produce delay,
   //    check clk conditions
   //          (30.4.2  I2C clock requirements,30.4.4  I2C initialization-->I2C timings ff)
+  //    PN, 21.oct 21: changed according to datasheet, but did not help, same mess
   //
   //  if this does not help enable i2c2 to 4
   //      (shift clock for data on SDA line might eventually come from other sources...)
@@ -504,7 +519,7 @@ uint8_t initI2c1()
 
 
 
-  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_ENABLE) != HAL_OK)
+  if (HAL_I2CEx_ConfigAnalogFilter(&hi2c1, I2C_ANALOGFILTER_DISABLE) != HAL_OK)
   {
 	  i2cError(0x88);
   }

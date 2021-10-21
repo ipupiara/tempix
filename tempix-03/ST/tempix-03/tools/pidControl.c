@@ -57,7 +57,7 @@ uint8_t  setEepromAddress(INT8U i2cAdr,INT8U memAdr)
 	byteArr[0] = memAdr;
 	do {
 //		res = receiveI2cByteArray(i2cAdr, &byteArr[0], 1, 1);   // just once used for debugging
-		res = sendI2cByteArray(i2cAdr, &byteArr[0], 1, 1);   // set 1 ms delay for debugging in the do while loop
+		res = sendI2cByteArray(i2cAdr, &byteArr[0], 1, 3);   // set 1 ms delay for debugging in the do while loop
 		if (res == 0) {
 			pollForReady(i2cAdr, 0);  // todo test if this is even needed here, without something to write
 		}
@@ -169,20 +169,6 @@ void sendMessageToServoControl(int32_t corrInt)
 	changeThrottlePos(corrInt);
 }
 
-void InitializePID()
-{
-    // Initialize controller parameters
-	// PN 3.Oct 2011, added m_kP for better setting of proportional factor only
-	// though these 4 factors will be linearly dependent
-	restorePersistentValues();
-
-    m_inv_stepTime = 1 / m_stepTime;
-    m_integral = 0;
-    m_started = 0;
-	corrCarryOver = 0;
-}
-
-
 
 real nextCorrection(real error)
 {
@@ -251,8 +237,15 @@ void calcNextTriacDelay()
 
 void initPid()
 {
-	InitializePID();
+    // Initialize controller parameters
+	// PN 3.Oct 2011, added m_kP for better setting of proportional factor only
+	// though these 4 factors will be linearly dependent
 	restorePersistentValues();
+
+    m_inv_stepTime = 1 / m_stepTime;
+    m_integral = 0;
+    m_started = 0;
+	corrCarryOver = 0;
 }
 
 void triggerNextPid()
