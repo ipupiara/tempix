@@ -668,6 +668,8 @@ uint8_t initI2c1()
   //
   //  if this does not help enable i2c2 to 4
   //      (shift clock for data on SDA line might eventually come from other sources...)
+  //  PN, 21.Oct21: as expected also this did not work
+  //
   //  if this also does not help transfer this very same code as
   //        close as possible on stm32F103
   //         (with the minimum needed changes due to hw differences in interface)
@@ -711,6 +713,7 @@ uint8_t initI2c1()
 void initI2c()
 {
 	initI2c1();
+	initI2cTo4();
 }
 
 void reInitI2cAfterError()   // called from backgroundEventQ
