@@ -171,11 +171,14 @@ static  void  StartupTask (void *p_arg)
 
     init_printf();
 	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
-	printStartMessage();
+	while (1) {
+		printStartMessage();
+		OSTimeDlyHMSM(0u, 0u, 0u, 10u);
+	}
 
-    initI2c();  // did not work so far..... no big chance ....
-    initEeprom();   //  does not send slave address and rd-wr bit
-	initPid();			//  stm32 sample programs do not run at all,
+//    initI2c();  // did not work so far..... no big chance ....
+//    initEeprom();   //  does not send slave address and rd-wr bit
+//	initPid();			//  stm32 sample programs do not run at all,
 						//  stm32 samples are obviousely done for an other hardware
 						//  though ii2c-eeprom is made for stm32F756xx  !!!!!!!  not understand
 
