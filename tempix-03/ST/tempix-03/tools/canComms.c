@@ -345,49 +345,28 @@ void CAN1_SCE_IRQHandler(void)
 
 
 
-void _CAN_Init(CAN_HandleTypeDef* hcan)
+void initCanInterrupts(CAN_HandleTypeDef* hcan)
 {
-  GPIO_InitTypeDef GPIO_InitStruct = {0};
-  if(hcan->Instance==CAN1)
-  {
-    __HAL_RCC_CAN1_CLK_ENABLE();
+	BSP_IntVectSet(CAN1_TX_IRQn,tempixIsrPrioLevel ,CPU_INT_KA,CAN1_TX_IRQHandler);
+	HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);
+	BSP_IntVectSet(CAN1_RX0_IRQn,tempixIsrPrioLevel ,CPU_INT_KA,CAN1_RX0_IRQHandler);
+	HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
+	BSP_IntVectSet(CAN1_RX1_IRQn,tempixIsrPrioLevel,CPU_INT_KA,CAN1_RX1_IRQHandler);
+	HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);
+	BSP_IntVectSet(CAN1_SCE_IRQn,tempixIsrPrioLevel ,CPU_INT_KA,CAN1_SCE_IRQHandler);
+	HAL_NVIC_EnableIRQ(CAN1_SCE_IRQn);
 
-    __HAL_RCC_GPIOA_CLK_ENABLE();
-    /**CAN1 GPIO Configuration
-    PA11     ------> CAN1_RX
-    PA12     ------> CAN1_TX
-    */
-    GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
-    GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
-    GPIO_InitStruct.Pull = GPIO_NOPULL;
-    GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
-    GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
-    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+	__HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_TMEIE);
 
-    /* CAN1 interrupt Init */
+	__HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_FMPIE0);
+	__HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_FMPIE1);
 
-    BSP_IntVectSet(CAN1_TX_IRQn,tempixIsrPrioLevel ,CPU_INT_KA,CAN1_TX_IRQHandler);
-    HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);
-    BSP_IntVectSet(CAN1_RX0_IRQn,tempixIsrPrioLevel ,CPU_INT_KA,CAN1_RX0_IRQHandler);
-    HAL_NVIC_EnableIRQ(CAN1_RX0_IRQn);
-    BSP_IntVectSet(CAN1_RX1_IRQn,tempixIsrPrioLevel,CPU_INT_KA,CAN1_RX1_IRQHandler);
-    HAL_NVIC_EnableIRQ(CAN1_RX1_IRQn);
-    BSP_IntVectSet(CAN1_SCE_IRQn,tempixIsrPrioLevel ,CPU_INT_KA,CAN1_SCE_IRQHandler);
-    HAL_NVIC_EnableIRQ(CAN1_SCE_IRQn);
+	__HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_ERRIE);
 
-    __HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_TMEIE);
-
-    __HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_FMPIE0);
-    __HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_FMPIE1);
-
-    __HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_ERRIE);
-
-    __HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_EWGIE);
-    __HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_EPVIE);
-    __HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_BOFIE);
-    __HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_LECIE);
-  }
-
+	__HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_EWGIE);
+	__HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_EPVIE);
+	__HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_BOFIE);
+	__HAL_CAN_ENABLE_IT(&hcan1,CAN_IER_LECIE);
 }
 
 
@@ -414,14 +393,28 @@ void initCanFilters()
 void initCanComms()
 {
 
-//	INT8U err;
-//
-//	TransmitMailboxStatus = OSFlagCreate((mailbox0Free | mailbox1Free  | mailbox2Free), &err);
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
 	canQSem = OSSemCreate(3);
-	if (canQSem != NULL) {
+	if (canQSem == NULL) {
 		Install_Error_Handler();
 	}
+
+   __HAL_RCC_CAN1_CLK_ENABLE();
+
+	__HAL_RCC_GPIOA_CLK_ENABLE();
+	/**CAN1 GPIO Configuration
+	PA11     ------> CAN1_RX
+	PA12     ------> CAN1_TX
+	*/
+	GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
+	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
+	GPIO_InitStruct.Pull = GPIO_NOPULL;
+	GPIO_InitStruct.Speed = GPIO_SPEED_FREQ_VERY_HIGH;
+	GPIO_InitStruct.Alternate = GPIO_AF9_CAN1;
+	HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
+
+
 
 	hcan1.Instance = CAN1;
 	hcan1.Init.Prescaler = 72;              // 125.00   kb/s
@@ -438,9 +431,10 @@ void initCanComms()
 	if (HAL_CAN_Init(&hcan1) != HAL_OK){
 		Install_Error_Handler();
 	}
-	_CAN_Init(&hcan1);
-	HAL_CAN_Start(&hcan1);
 	initCanFilters();
+	initCanInterrupts(&hcan1);
+	HAL_CAN_Start(&hcan1);
+
 }
 
 void sendCanPingMessage()
