@@ -171,10 +171,7 @@ static  void  StartupTask (void *p_arg)
 
     init_printf();
 	OSTimeDlyHMSM(0u, 0u, 1u, 0u);  // wait for uart/dma ready,  else fe happens when immediately sending a msg
-	while (1) {
-		printStartMessage();
-		OSTimeDlyHMSM(0u, 0u, 0u, 10u);
-	}
+	printStartMessage();
 
 //    initI2c();  // did not work so far..... no big chance ....
 //    initEeprom();   //  does not send slave address and rd-wr bit
@@ -206,7 +203,7 @@ static  void  StartupTask (void *p_arg)
         	BSP_LED_Off(USER_LD3);
         }
         while (1)  {
-        	sendCanTestMessage();
+        	sendCanPingMessage();
         	OSTimeDlyHMSM(0, 0, 0, 2);
         }
 

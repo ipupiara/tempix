@@ -8,6 +8,7 @@ enum backGroundEvents
 {
 	evUartStringReceived,
 	i2cReinitNeeded,
+	evThottleActorPingResponse,
 	evNumberOfBackgroundEvents
 };
 
@@ -18,6 +19,7 @@ typedef struct  {
 		struct {			// currently not in use
 			u_int8_t  anyInt;
 		} zeroEvent;
+		uint8_t canData[8];
 		INT8U dummyFiller [10]; // needed for messageQueue
 	}  evData;
 
@@ -32,6 +34,6 @@ OS_EVENT*  backGroundEventTaskQ;
 backGroundEvent backGroundEventBuffer[backGroundEventBufSz];
 void* backGroundEventPtrBuffer[backGroundEventBufSz];
 
-
+void sendCanPingMessage();
 
 #endif

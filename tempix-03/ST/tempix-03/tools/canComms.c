@@ -4,6 +4,7 @@
 #include <pidControl.h>
 #include <stm32f7xx_hal_can.h>
 #include <stm32f7xx_hal_def.h>
+#include <main.h>
 
 CAN_HandleTypeDef hcan1;
 
@@ -18,6 +19,8 @@ OS_EVENT *canQSem;
 
 uint8_t syncSendTempixSimpleCommand( TempixSimpleCommand* scmd)
 {
+	// semaphore allows waiting for a mailbox if full
+	//
 	uint8_t err = 1;
 	OSSemPend(canQSem, 0, &err);
 	if (err == OS_ERR_NONE ) {
@@ -35,13 +38,18 @@ uint8_t syncSendTempixSimpleCommand( TempixSimpleCommand* scmd)
 
 void dispatchCanMessage( CAN_RxHeaderTypeDef *pHeader, uint8_t aData[])
 {
-	/* Prevent unused argument(s) compilation warning */
-//	UNUSED(&hcan1);
-
-	 /* NOTE : This function Should not be modified, when the callback is needed,
-	            the HAL_CAN_TxMailbox0CompleteCallback could be implemented in the
-	            user file
-	   */
+	if (pHeader->StdId == thottleActorPingResponse) {
+		uint8_t err = OS_ERR_NONE;
+		backGroundEvent *  bgEvPtr;
+		bgEvPtr = (backGroundEvent *) OSMemGet(backGroundEventMem, &err);
+		for (uint8_t cnt = 0; cnt < 8 ;++cnt) {
+			bgEvPtr->evData.canData[cnt] = 8; // aData[cnt];
+		}
+		if( bgEvPtr != 0 ) {
+			bgEvPtr->evType = evThottleActorPingResponse;
+			OSQPost(backGroundEventTaskQ, (void *)bgEvPtr);
+		}
+	}
 }
 
 void dispatchMsgOfFifo(uint32_t RxFifo)
@@ -138,6 +146,12 @@ void CAN1_TX_IRQHandler(void)
 			}
 		}
 	}
+
+//   todo consider something like this:
+//	if ((__HAL_CAN_GET_FLAG(&hcan1,CAN_FLAG_TME0)) && (__HAL_CAN_GET_FLAG(&hcan1,CAN_FLAG_TME1))&&(__HAL_CAN_GET_FLAG(&hcan1,CAN_FLAG_TME2)))  {
+//		checkSemaphoreStateFull();
+//	}
+
 	OSIntExit();
 }
 
@@ -429,7 +443,7 @@ void initCanComms()
 	initCanFilters();
 }
 
-void sendCanTestMessage()
+void sendCanPingMessage()
 {
 	TempixSimpleCommand scmd;
 	scmd.commandId = controllerPingRequest;
