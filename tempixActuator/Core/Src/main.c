@@ -183,18 +183,17 @@ void initCanFilters()
 static void MX_CAN_Init(void)
 {
 
-  /* USER CODE BEGIN CAN_Init 0 */
-
-  /* USER CODE END CAN_Init 0 */
-
-  /* USER CODE BEGIN CAN_Init 1 */
 
 	GPIO_InitTypeDef GPIO_InitStruct = {0};
 
-	/**CAN1 GPIO Configuration
-	PA11     ------> CAN1_RX
-	PA12     ------> CAN1_TX
-	*/
+    __HAL_RCC_CAN1_CLK_ENABLE();
+
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+
+	// CAN1 GPIO Configuration
+	// PA11     ------> CAN1_RX
+	// PA12     ------> CAN1_TX
+
 	GPIO_InitStruct.Pin = GPIO_PIN_11|GPIO_PIN_12;
 	GPIO_InitStruct.Mode = GPIO_MODE_AF_PP;
 	GPIO_InitStruct.Pull = GPIO_NOPULL;
@@ -219,28 +218,6 @@ static void MX_CAN_Init(void)
   {
     Error_Handler();
   }
-  /*
-   *
-   *   from testProject:
-   *   hcan.Instance = CAN1;
-  hcan.Init.Prescaler = 16;
-  hcan.Init.Mode = CAN_MODE_NORMAL;
-  hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;
-  hcan.Init.TimeSeg1 = CAN_BS1_1TQ;
-  hcan.Init.TimeSeg2 = CAN_BS2_3TQ;
-  hcan.Init.TimeTriggeredMode = DISABLE;
-  hcan.Init.AutoBusOff = DISABLE;
-  hcan.Init.AutoWakeUp = DISABLE;
-  hcan.Init.AutoRetransmission = DISABLE;
-  hcan.Init.ReceiveFifoLocked = DISABLE;
-  hcan.Init.TransmitFifoPriority = DISABLE;
-  if (HAL_CAN_Init(&hcan) != HAL_OK)
-  {
-    Error_Handler();
-  }
-   *
-   *
-   * USER CODE BEGIN CAN_Init 2 */
 
   HAL_NVIC_SetPriority(CAN1_TX_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);
@@ -263,7 +240,7 @@ static void MX_CAN_Init(void)
   __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_BOFIE);
   __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_LECIE);
 
-  /* USER CODE END CAN_Init 2 */
+
 
 }
 
