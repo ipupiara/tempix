@@ -441,8 +441,8 @@ void sendCanPingMessage()
 {
 	TempixSimpleCommand scmd;
 	scmd.commandId = controllerPingRequest;
-	scmd.commandData1 = 0x5a5a5a5a;
-	scmd.commandData2 = 0xFF00FF0F;
+	scmd.commandData1 = 0xaaaaaaaa;
+	scmd.commandData2 = 0xaaaaaaaa;
 
 	syncSendTempixSimpleCommand( &scmd);
 }
