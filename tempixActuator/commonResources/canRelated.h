@@ -11,12 +11,16 @@
 #endif
 // lowest 11 bits allowed, ie.  Masked against  0000 07FF
 #define controllerCommandMessage   0x00000101
+
 #define controllerPingRequest      0x00000121
+#define controllerPingResponse     0x00000121
 
 #define thottleActorStateMessage	 0x00000201
-#define thottleActorAlarmMessage	 0x00000210
-#define thottleActorPingResponse	0x00000221
 
+#define thottleActorAlarmMessage	 0x00000210
+
+#define thottleActorPingResponse	 0x00000221
+#define thottleActorPingRquest		 0x00000222
 
 //typedef struct
 //{
