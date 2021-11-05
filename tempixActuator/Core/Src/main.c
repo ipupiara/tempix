@@ -19,9 +19,10 @@
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
-#include "canRelated.h"
 #include <stm32f1xx_hal_can.h>
 #include <stm32f1xx_hal_def.h>
+#include "canRelated.h"
+#include <canActuatorComms.h>
 
 
 /* Private includes ----------------------------------------------------------*/
@@ -53,7 +54,6 @@
 /* Private function prototypes -----------------------------------------------*/
 void SystemClock_Config(void);
 static void MX_GPIO_Init(void);
-static void MX_CAN_Init(void);
 /* USER CODE BEGIN PFP */
 
 /* USER CODE END PFP */
