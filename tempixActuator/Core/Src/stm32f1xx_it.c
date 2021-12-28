@@ -21,41 +21,10 @@
 /* Includes ------------------------------------------------------------------*/
 #include "main.h"
 #include <canRelated.h>
-/* Private includes ----------------------------------------------------------*/
-/* USER CODE BEGIN Includes */
-/* USER CODE END Includes */
 
-/* Private typedef -----------------------------------------------------------*/
-/* USER CODE BEGIN TD */
+extern ADC_HandleTypeDef hadc1;
+extern uint16_t lastADCResult;
 
-/* USER CODE END TD */
-
-/* Private define ------------------------------------------------------------*/
-/* USER CODE BEGIN PD */
-
-/* USER CODE END PD */
-
-/* Private macro -------------------------------------------------------------*/
-/* USER CODE BEGIN PM */
-
-/* USER CODE END PM */
-
-/* Private variables ---------------------------------------------------------*/
-/* USER CODE BEGIN PV */
-
-/* USER CODE END PV */
-
-/* Private function prototypes -----------------------------------------------*/
-/* USER CODE BEGIN PFP */
-
-/* USER CODE END PFP */
-
-/* Private user code ---------------------------------------------------------*/
-/* USER CODE BEGIN 0 */
-
-/* USER CODE END 0 */
-
-/* External variables --------------------------------------------------------*/
 extern CAN_HandleTypeDef hcan;
 /* USER CODE BEGIN EV */
 
@@ -192,18 +161,37 @@ void SysTick_Handler(void)
   /* USER CODE END SysTick_IRQn 1 */
 }
 
-/******************************************************************************/
-/* STM32F1xx Peripheral Interrupt Handlers                                    */
-/* Add here the Interrupt Handlers for the used peripherals.                  */
-/* For the available peripheral interrupt handler names,                      */
-/* please refer to the startup file (startup_stm32f1xx.s).                    */
-/******************************************************************************/
+void ADC1_2_IRQHandler(void)
+{
+	  if(__HAL_ADC_GET_IT_SOURCE(&hadc1, ADC_IT_EOC))
+	  {
+	    if(__HAL_ADC_GET_FLAG(&hadc1, ADC_FLAG_EOC) )
+	    {
+	      __HAL_ADC_CLEAR_FLAG(&hadc1, ADC_FLAG_EOC);
+
+	      lastADCResult = (uint16_t)  (hadc1.Instance->DR & 0x0000FFFF);
+//	      toggleDebugOne();
+	    }
+	  }
+
+	  if(__HAL_ADC_GET_IT_SOURCE(&hadc1, ADC_IT_AWD))
+	  {
+	    if(__HAL_ADC_GET_FLAG(&hadc1, ADC_FLAG_AWD))
+	    {
+	      __HAL_ADC_CLEAR_FLAG(&hadc1, ADC_FLAG_AWD);
+
+//	      if ( lastADCResult   > hadc1.Instance->HTR ) {
+//	    	  if (hvPwmState == hvPwmRunning)  {
+//	    		  stopHvPwm();
+//	    	  }
+//	      }  else if (lastADCResult < hadc1.Instance->LTR) {
+//	    	  if (hvPwmState == hvPwmIdle)  {
+//				  startHvPwm();
+//			  }
+//	      }
+	    }
+	  }
+}
 
 
-/**
-  * @brief This function handles USB low priority or CAN RX0 interrupts.
-  */
-/* USER CODE BEGIN 1 */
 
-/* USER CODE END 1 */
-/************************ (C) COPYRIGHT STMicroelectronics *****END OF FILE****/
