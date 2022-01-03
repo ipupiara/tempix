@@ -1,7 +1,7 @@
 #ifndef asdfdgdreuosii_includes_h
 #define asdfdgdreuosii_includes_h
 
-#define  tempixIsrPrioLevel    0x04UL
+
 
 
 #include  <stm32f7xx_hal.h>
@@ -17,5 +17,6 @@
 #include  <bsp_int.h>
 #include  <app_cfg.h>
 
+#define  tempixIsrPrioLevel    CPU_CFG_KA_IPL_BOUNDARY
 
 #endif
