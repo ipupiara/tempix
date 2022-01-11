@@ -11,6 +11,10 @@
 #include <i2c.h>
 #include <uosii-includes.h>
 #include <throttleActuator.h>
+#include <stm32f7xx_hal_flash.h>
+
+#define useFlash
+#define flashPages
 
 #define eepromI2cAdr   0x50
 
@@ -24,6 +28,144 @@ real  m_integral, m_prev_error, m_inv_stepTime, corrCarryOver;    //  non persis
 //  eclipse thing
 
 //OS_EVENT *i2cTransactionSem;
+
+#ifdef useFlash
+#define FLASH_TYPEERASE_PAGES  0xff
+#define FLASH_PAGE_SIZE   0xff
+#define pageSize    0xff
+#define nrOfPages   0x01
+#define byteSize    0x04
+#define StartPageAddress 0xaaaaaaaa
+#define StartPageSector 0x12
+#define EndPageAddress   0xbbbbbbbb  //remove redundancies in calculations
+#define numberofwords    0xFF    //  remove somewhat redundant variable, calc from nr0fPages, pageSize and byteSize
+#ifdef flashPages
+
+void initFlash()
+{
+	//  todo enable interrupt and check for code via testproject / sample on github under above address
+}
+
+void flash_WaitForLastOperation(uint32_t Timeout)
+{
+	//  implement with interrupt and access-semaphore
+}
+
+uint32_t GetPage(uint32_t  addr)
+{
+	return 0;
+}
+
+uint32_t Flash_Write_Data (uint32_t val,  uint32_t *Data)
+{
+	static FLASH_EraseInitTypeDef EraseInitStruct;
+	uint32_t PAGEError;
+	uint8_t sofar;
+
+// code from https://controllerstech.com/flash-programming-in-stm32/
+
+	  uint32_t StartPage = GetPage(StartPageAddress);
+
+	  uint32_t EndPage = GetPage(EndPageAddress);
+
+	   /* Fill EraseInit structure*/
+	   EraseInitStruct.TypeErase   = FLASH_TYPEERASE_PAGES;
+	   EraseInitStruct.Sector = StartPageSector;
+	   EraseInitStruct.NbSectors     = ((EndPage - StartPage)/FLASH_PAGE_SIZE) +1;
+
+	   if (HAL_FLASHEx_Erase(&EraseInitStruct, &PAGEError) != HAL_OK)  {
+		  return HAL_FLASH_GetError ();
+	   }
+
+
+	   uint32_t  adr = StartPageAddress;
+	   for (sofar = 0; sofar < numberofwords; ++ sofar)  {
+	     if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, StartPageAddress, Data[sofar]) == HAL_OK)  {
+	    	 adr += 4;  // use StartPageAddress += 2 for half word and 8 for double word
+	    	 sofar++;
+	     }
+	     else {
+	    	 return HAL_FLASH_GetError ();
+	     }
+	   }
+	   return 0;
+}
+
+uint32_t Flash_Read_Data ( uint32_t nrOfBytes , uint32_t RxBuf [])
+{
+	uint32_t* adr = (uint32_t *) StartPageAddress;
+	uint32_t byteCnt ;
+	for  (byteCnt = 0; byteCnt < nrOfBytes; ++ byteCnt) {
+			adr +=  byteSize;
+			adr++;
+			RxBuf[byteCnt] = *adr;
+		}
+	return 0;
+}
+
+#else
+/*
+ *
+ *
+ *
+ *
+uint32_t Flash_Write_Data (uint32_t StartSectorAddress, uint32_t *Data, uint16_t numberofwords)
+{
+
+	static FLASH_EraseInitTypeDef EraseInitStruct;
+	uint32_t SECTORError;
+	int sofar=0;
+
+	  uint32_t StartSector = GetSector(StartSectorAddress);
+	  uint32_t EndSectorAddress = StartSectorAddress + numberofwords*4;
+	  uint32_t EndSector = GetSector(EndSectorAddress);
+
+	  EraseInitStruct.TypeErase     = FLASH_TYPEERASE_SECTORS;
+	  EraseInitStruct.VoltageRange  = FLASH_VOLTAGE_RANGE_3;
+	  EraseInitStruct.Sector        = StartSector;
+	  EraseInitStruct.NbSectors     = (EndSector - StartSector) + 1;
+
+
+	  if (HAL_FLASHEx_Erase(&EraseInitStruct, &SECTORError) != HAL_OK)
+	  {
+		  return HAL_FLASH_GetError ();
+	  }
+
+	   while (sofar<numberofwords)
+	   {
+	     if (HAL_FLASH_Program(FLASH_TYPEPROGRAM_WORD, StartSectorAddress, Data[sofar]) == HAL_OK)
+	     {
+	    	 StartSectorAddress += 4;  // use StartPageAddress += 2 for half word and 8 for double word
+	    	 sofar++;
+	     }
+	     else
+	     {
+	    	 return HAL_FLASH_GetError ();
+	     }
+	   }
+	   return 0;
+}
+
+
+void Flash_Read_Data (uint32_t StartSectorAddress, uint32_t *RxBuf, uint16_t numberofwords)
+{
+	while (1)
+	{
+		*RxBuf = *(__IO uint32_t *)StartSectorAddress;
+		StartSectorAddress += 4;
+		RxBuf++;
+		if (!(numberofwords--)) break;
+	}
+}
+ *
+ *
+ *
+ */
+
+
+
+#endif
+#endif
 
 enum valuesToSave
 {
