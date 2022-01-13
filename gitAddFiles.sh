@@ -1,7 +1,4 @@
 ﻿echo on
-
-
-
 echo .
 echo git add files to commmit ... 
 echo allways the same files to add, so best put it in a batch file, 
@@ -28,6 +25,8 @@ git add commonResources/*
 
 git add gitAddFiles.bat
 git add checkOriginMaster.bat
+git add gitAddFiles.sh
+git add checkOriginMaster.sh
 git add .gitignore
 
 git status
