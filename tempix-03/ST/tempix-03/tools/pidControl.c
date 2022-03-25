@@ -18,7 +18,7 @@
 
 #define eepromI2cAdr   0x50
 
-
+uint32_t  correctionDirection;
 int8_t m_started;
 real m_kPTot, m_kP, m_kI, m_kD, m_stepTime, m_error_thresh;   // persistent values to save on eeprom
 real  m_integral, m_prev_error, m_inv_stepTime, corrCarryOver;    //  non persistent values
@@ -299,8 +299,6 @@ uint8_t restorePersistentValues()
 	err |= restoreReal(&m_error_thresh, error_thresh);
 	return err;
 }
-
-uint32_t   desiredSpeedInv, actualSpeedInv;
 
 //uint8_t    resetOnError;
 

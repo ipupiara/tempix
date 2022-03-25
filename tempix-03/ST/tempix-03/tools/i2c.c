@@ -17,6 +17,8 @@ OS_EVENT *i2cJobSem;
 
 I2C_HandleTypeDef hi2c1;
 
+uint8_t resetOnError;
+INT8U i2cInitialized;
 
 uint8_t  transmitErrorCollectorInt8u;
 uint8_t  jobSemSet;
@@ -729,17 +731,8 @@ void reInitOnError()
 {
 	i2cSendStop(&hi2c1);
 	if (resetOnError != 0)  {
-		uint8_t err = OS_ERR_NONE;
-		backGroundEvent *  bgEvPtr;
-		i2cInitialized = 0;
-		disableI2c();
-		bgEvPtr = (backGroundEvent *) OSMemGet(backGroundEventMem, &err);
-		if( bgEvPtr != 0 ) {
-			bgEvPtr->evType = i2cReinitNeeded;
-			err = OSQPost(backGroundEventTaskQ, (void *)bgEvPtr);
-		}
-		if ( err != OS_ERR_NONE) {
-			info_printf("critical: could not reset i2c\n");
-		}
+		backGroundEvent   bgEv;
+		bgEv.evType = i2cReinitNeeded;
+		proceedBackGroundEvent(&bgEv);
 	}
 }

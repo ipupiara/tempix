@@ -15,9 +15,12 @@
 #include "uart-comms.h"
 #include "uart-hw.h"
 
+extern OS_EVENT *dmaQSem;
+
 INT32U  amtErr;			// amt calls to err_printf
 INT32U  amtPrintErr;   // errors during print out, where err_printf should not be called
 
+INT8U  serialOn;
 
 
 #define serialStrBufSz    7
@@ -67,7 +70,6 @@ static  void  SerialQMethod (void *p_arg)
 					 }
 					 strncpy(dmaTxStringBuffer.serialStr,sm->serialStr,serialPrintStrSz-1);
 					 dmaTxStringBuffer.serialStr[serialPrintStrSz-1] = 0;    // for safety reason
-					 commsError = 0;
 					 sendUartString(dmaTxStringBuffer.serialStr);
 					 err = OSMemPut(serialMsgMem, (void *)sm);
 				 } else {

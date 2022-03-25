@@ -20,7 +20,7 @@ enum  eEventTypes
 	evFatalError
 };
 
-INT8U   workingTimerActive;
+
 
 typedef struct  {
 	uint8_t evType;
@@ -34,8 +34,7 @@ typedef struct  {
 } CTempixEvent ;
 
 
-TStatechart TempixStateChart;
-TStatechart* pTempixStateChart;
+
 
 void startTempixStateChart();
 

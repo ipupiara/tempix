@@ -1,16 +1,19 @@
 #ifndef  main_h_includefile
 #define  main_h_includefile
 
+
 #include  <uosii-includes.h>
 #include  <uart-hw.h>
+#include <canRelated.h>
 
-enum backGroundEvents
+typedef enum backGroundEvents
 {
 	evUartStringReceived,
 	i2cReinitNeeded,
+	canMessageReadyForSend,
 	evThottleActorPingResponse,
 	evNumberOfBackgroundEvents
-};
+} BackGroundEvents;
 
 typedef struct  {
 	uint8_t evType;
@@ -19,21 +22,15 @@ typedef struct  {
 		struct {			// currently not in use
 			u_int8_t  anyInt;
 		} zeroEvent;
-		uint8_t canData[8];
+		TempixSimpleCommand canMessage;
 		INT8U dummyFiller [10]; // needed for messageQueue
+//		uint8_t  enumerator [];
 	}  evData;
 
 } backGroundEvent ;
 
 #define backGroundEventBufSz    7
 
-OS_MEM * backGroundEventMem;
-
-OS_EVENT*  backGroundEventTaskQ;
-
-backGroundEvent backGroundEventBuffer[backGroundEventBufSz];
-void* backGroundEventPtrBuffer[backGroundEventBufSz];
-
-void sendCanPingMessage();
+uint8_t proceedBackGroundEvent(backGroundEvent* bgEv);
 
 #endif

@@ -33,8 +33,9 @@
 *                                            INCLUDE FILES
 *********************************************************************************************************
 */
+//#include  <stm32f7xx_hal.h>
 #include <main.h>
-
+#include <string.h>
 
 #include <uart-comms.h>
 #include <uart-hw.h>
@@ -50,30 +51,16 @@
 
 #include  "../app_cfg.h"
 
-/*
-*********************************************************************************************************
-*                                            LOCAL DEFINES
-*********************************************************************************************************
-*/
+extern INT8U  commsError;
 
+OS_MEM * backGroundEventMem;
 
-/*
-*********************************************************************************************************
-*                                       LOCAL GLOBAL VARIABLES
-*********************************************************************************************************
-*/
+OS_EVENT*  backGroundEventTaskQ;
+
+backGroundEvent backGroundEventBuffer[backGroundEventBufSz];
+void* backGroundEventPtrBuffer[backGroundEventBufSz];
 
 static  OS_STK  StartupTaskStk[APP_CFG_STARTUP_TASK_STK_SIZE];
-
-
-
-
-
-/*
-*********************************************************************************************************
-*                                         FUNCTION PROTOTYPES
-*********************************************************************************************************
-*/
 
 static  void  StartupTask (void  *p_arg);
 
@@ -93,6 +80,35 @@ void initEventQ()
 	}
 }
 
+//void sendBackgroundCanMessage( TempixSimpleCommand* bgEvData)
+//{
+//	uint8_t err = OS_ERR_NONE;
+//	backGroundEvent *  bgEvPtr;
+//	bgEvPtr = (backGroundEvent *) OSMemGet(backGroundEventMem, &err);
+////	for (uint8_t cnt = 0; cnt < 8 ;++cnt) {
+////		bgEvPtr->evData.canData[cnt] = 8; // aData[cnt];
+////	}
+//	if( bgEvPtr != 0 ) {
+//		memmove((char*)bgEvPtr,(char*))
+//		bgEvPtr->evType = evThottleActorPingResponse;
+//		OSQPost(backGroundEventTaskQ, (void *)bgEvPtr);
+//	}
+//}
+
+uint8_t proceedBackGroundEvent(backGroundEvent* bgEv)
+{
+	uint8_t err = OS_ERR_NONE;
+	backGroundEvent *  bgEvPtr;
+	bgEvPtr = (backGroundEvent *) OSMemGet(backGroundEventMem, &err);
+	if( bgEvPtr != 0 ) {
+		memmove((char*)bgEvPtr,(char*)bgEv,sizeof(backGroundEvent));
+		OSQPost(backGroundEventTaskQ, (void *)bgEvPtr);
+	} else {
+		err = 0x99;
+	}
+	return err;
+}
+
 uint8_t dispatchBackgroundEvent(backGroundEvent* ev)
 {
 	uint8_t res = OS_ERR_NONE;
@@ -101,8 +117,19 @@ uint8_t dispatchBackgroundEvent(backGroundEvent* ev)
 	return res;
 }
 
+
+
 int  main (void)
 {
+	/*
+	 *
+	 *
+	 *   todo todo todo   project settings in c preprocessor   defined useHSIclock --- what does this ? erase entry ?
+	 *
+	 *
+	 *
+	 *
+	 */
 #if OS_TASK_NAME_EN > 0u
     CPU_INT08U  os_err;
 #endif
@@ -203,14 +230,14 @@ static  void  StartupTask (void *p_arg)
         	BSP_LED_Off(USER_LD3);
         }
         while (1)  {
-        	sendCanPingMessage();
+//        	sendCanPingMessage();
         	OSTimeDlyHMSM(0, 0, 0, 2);
         }
 
       	bgEvPtr = (backGroundEvent *)OSQPend(backGroundEventTaskQ, 1009, &err);
        	if (err == OS_ERR_NONE) {
-       		switch (bgEvPtr->evType) {                /* See if we timed-out or aborted                */
-				case evUartStringReceived:                         /* Extract message from TCB (Put there by QPost) */
+       		switch (bgEvPtr->evType) {
+				case evUartStringReceived:
 					forwardReceivedStringBuffer(bgEvPtr->evData.uartString);
 					break;
 				case i2cReinitNeeded:

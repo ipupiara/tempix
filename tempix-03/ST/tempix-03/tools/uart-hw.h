@@ -14,8 +14,6 @@
 
 #define dmaAvailable  0x01
 
-OS_EVENT *dmaQSem;
-
 INT8U initUartHw();
 
 INT8U startUartHw();
@@ -27,8 +25,5 @@ INT8U enableUartInterrupts();
 
 INT8U disableUartInterrupts();
 
-
-INT32U  rxMsgCounter;
-INT32U  txMsgCounter;
 
 #endif /* ST_TEMPIX_TOOLS_UART_HW_H_ */

@@ -24,14 +24,20 @@ UART_HandleTypeDef huart1;
 DMA_HandleTypeDef hdma_usart1_tx;
 DMA_HandleTypeDef hdma_usart1_rx;
 
-
-
 enum {
 	fromHalfTransferCompleteIsr = 1,
 	fromTransferCompleteIsr,
 	fromUartIsr
 };
 
+extern INT16U  feCounter;
+extern INT16U  teCounter;
+extern INT16U  dmeCounter;
+
+INT8U  commsError;
+OS_EVENT *dmaQSem;
+INT32U  rxMsgCounter;
+INT32U  txMsgCounter;
 
 void clearUartInterruptFlags(UART_HandleTypeDef * huart)
 {
@@ -344,13 +350,13 @@ INT8U initUartHw()
 
 	debugIdleCounter = 0;
 	resetDebugArray();
-
+	 commsError = 0;
 	feCounter = 0;
 	teCounter = 0;
 	dmeCounter = 0;
 	rxMsgCounter = 0;
 	txMsgCounter = 0;
-	commsError = 0;
+
 
 	dmaQSem = OSSemCreate(0);
 
@@ -409,7 +415,6 @@ INT8U startUartHw()
 INT8U enableUartInterrupts()
 {
 	INT8U res = 0;
-	commsError = 0;
 	clearDmaInterruptFlags(&hdma_usart1_tx);
 	clearDmaInterruptFlags(&hdma_usart1_rx);
 	clearUartInterruptFlags(&huart1);

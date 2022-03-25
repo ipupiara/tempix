@@ -32,6 +32,13 @@ TIM_HandleTypeDef htim5;
 
 #define tim5PrescalerValue 216   //  define it so that 1 sec = 1*E+6 counter values
 #define tim5PeriodValue  500000   //  stop counting after 0.5 sec
+
+INT8U   setAccPressed;
+INT8U   resDecPressed;
+INT8U   switchedOn;
+INT8U	switchedOff;
+INT8U   clutchBreakPressed;
+
 INT8U  turnCounter;
 
 void setKeyEvent(INT8U kyEv)

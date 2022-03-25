@@ -10,10 +10,6 @@
 
 #include <uosii-includes.h>
 
-INT8U  serialOn;
-
-INT8U  commsError;
-
 
 
 void init_printf();

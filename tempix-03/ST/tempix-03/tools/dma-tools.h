@@ -15,9 +15,6 @@ enum {
 	withHT
 };
 
-INT16U  feCounter;
-INT16U  teCounter;
-INT16U  dmeCounter;
 
 void incDMAErrorCounter(DMA_HandleTypeDef *hdma);
 

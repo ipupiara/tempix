@@ -16,6 +16,10 @@
 extern const uStInt uStIntHandlingDone;
 extern const uStInt uStIntNoMatch;
 
+INT8U   workingTimerActive;
+TStatechart TempixStateChart;
+TStatechart* pTempixStateChart;
+
 CTempixEvent* currentTempixEvent;
 
 OS_EVENT *TempixStatechartResourceSema;

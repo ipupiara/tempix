@@ -36,20 +36,14 @@ uint8_t syncSendTempixSimpleCommand( TempixSimpleCommand* scmd)
 
 
 
-void dispatchCanMessage( CAN_RxHeaderTypeDef *pHeader, uint8_t aData[])
+void sendBackGroundCanMessage( CAN_RxHeaderTypeDef *pHeader, uint8_t aData[])
 {
-	if (pHeader->StdId == thottleActorPingResponse) {
-		uint8_t err = OS_ERR_NONE;
-		backGroundEvent *  bgEvPtr;
-		bgEvPtr = (backGroundEvent *) OSMemGet(backGroundEventMem, &err);
-		for (uint8_t cnt = 0; cnt < 8 ;++cnt) {
-			bgEvPtr->evData.canData[cnt] = 8; // aData[cnt];
-		}
-		if( bgEvPtr != 0 ) {
-			bgEvPtr->evType = evThottleActorPingResponse;
-			OSQPost(backGroundEventTaskQ, (void *)bgEvPtr);
-		}
-	}
+	backGroundEvent bgEv;
+	bgEv.evType = canMessageReadyForSend;
+	bgEv.evData.canMessage.commandId = pHeader->StdId;
+	memset((void*)&bgEv,0,sizeof(bgEv));
+	memmove((char*)bgEv.evData.canMessage.commandData1,(char*)aData,8);
+	proceedBackGroundEvent(&bgEv);
 }
 
 void dispatchMsgOfFifo(uint32_t RxFifo)
@@ -58,7 +52,9 @@ void dispatchMsgOfFifo(uint32_t RxFifo)
 	uint8_t mData[8];
 
 	if ( HAL_CAN_GetRxMessage(&hcan1, RxFifo, &mHeader, mData) == HAL_OK) {
-		dispatchCanMessage(&mHeader, mData);
+		if (mHeader.StdId == thottleActorPingResponse) {
+			sendBackGroundCanMessage(&mHeader, mData);
+		}
 	}  else {
 		// handle some Error
 	}

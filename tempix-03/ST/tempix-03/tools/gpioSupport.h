@@ -10,11 +10,7 @@
 void initGpioSupport ();
 
 
-INT8U   setAccPressed;
-INT8U   resDecPressed;
-INT8U   switchedOn;
-INT8U	switchedOff;
-INT8U   clutchBreakPressed;
+
 
 
 INT8U isTempixSwitchedOn();

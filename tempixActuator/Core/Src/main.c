@@ -18,6 +18,7 @@
   */
 /* USER CODE END Header */
 /* Includes ------------------------------------------------------------------*/
+#include "stm32f1xx_hal.h"
 #include "main.h"
 #include <stm32f1xx_hal_can.h>
 #include <stm32f1xx_hal_def.h>

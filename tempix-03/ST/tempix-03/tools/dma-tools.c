@@ -8,6 +8,10 @@ typedef struct
   __IO uint32_t IFCR;  /*!< DMA interrupt flag clear register */
 } DMA_Base_Registers;
 
+INT16U  feCounter;
+INT16U  teCounter;
+INT16U  dmeCounter;
+
 
 void clearDmaInterruptFlags(DMA_HandleTypeDef *hdma)
 {

@@ -34,7 +34,7 @@ typedef struct
 {
 	uint32_t   commandId;
 	uint32_t   commandData1;
-	uint32_t   commandData2;
+	uint32_t   commandData2;     // datasize always 8
 }  TempixSimpleCommand;
 
 void Install_Error_Handler();

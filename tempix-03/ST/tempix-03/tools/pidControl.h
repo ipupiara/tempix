@@ -5,8 +5,6 @@
 #include <math.h>
 
 
-void initEeprom();
-
 typedef double real;
 
 enum directions {
@@ -14,8 +12,8 @@ enum directions {
 	down
 };
 
-uint32_t  correctionDirection;
 
+void initEeprom();
 void triggerNextPid();
 
 void incSpeed();
