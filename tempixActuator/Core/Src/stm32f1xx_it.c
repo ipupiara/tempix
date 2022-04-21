@@ -25,6 +25,8 @@
 extern ADC_HandleTypeDef hadc1;
 extern uint16_t lastADCResult;
 
+extern void sec10Tick();
+
 extern CAN_HandleTypeDef hcan;
 /* USER CODE BEGIN EV */
 
@@ -150,12 +152,28 @@ void PendSV_Handler(void)
 /**
   * @brief This function handles System tick timer.
   */
+
+uint8_t tickIntervalCnt;
+
+__weak void sec10Tick()
+{
+//  uint8_t res;
+//  UNUSED(res);
+}
+
+
 void SysTick_Handler(void)
 {
   /* USER CODE BEGIN SysTick_IRQn 0 */
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
+  if (tickIntervalCnt > 100) {
+	  tickIntervalCnt = 0;
+	  sec10Tick();
+  }
+  ++ tickIntervalCnt;
+
   /* USER CODE BEGIN SysTick_IRQn 1 */
 
   /* USER CODE END SysTick_IRQn 1 */

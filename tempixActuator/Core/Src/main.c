@@ -53,14 +53,29 @@ static void MX_GPIO_Init(void);
   * @retval int
   */
 
+uint8_t sec10Tk;
+
+void sec10Tick()
+{
+	sec10Tk = 1;
+}
+
+
 static void MX_ADC1_Init(void)
 {
 
-  /* USER CODE BEGIN ADC1_Init 0 */
+	GPIO_InitTypeDef GPIO_InitStruct = {0};
+    __HAL_RCC_ADC1_CLK_ENABLE();
 
-	//   adc input pin is PA1
+    __HAL_RCC_GPIOA_CLK_ENABLE();
+    /**ADC1 GPIO Configuration
+    PA0-WKUP     ------> ADC1_IN0
+    */
+    GPIO_InitStruct.Pin = GPIO_PIN_0;
+    GPIO_InitStruct.Mode = GPIO_MODE_ANALOG;
+    HAL_GPIO_Init(GPIOA, &GPIO_InitStruct);
 
-  /* USER CODE END ADC1_Init 0 */
+
 
   ADC_AnalogWDGConfTypeDef AnalogWDGConfig = {0};
   ADC_ChannelConfTypeDef sConfig = {0};
@@ -72,7 +87,7 @@ static void MX_ADC1_Init(void)
   */
   hadc1.Instance = ADC1;
   hadc1.Init.ScanConvMode = ADC_SCAN_DISABLE;
-  hadc1.Init.ContinuousConvMode = ENABLE;
+  hadc1.Init.ContinuousConvMode = DISABLE;
   hadc1.Init.DiscontinuousConvMode = DISABLE;
   hadc1.Init.ExternalTrigConv = ADC_SOFTWARE_START;
   hadc1.Init.DataAlign = ADC_DATAALIGN_RIGHT;
@@ -124,60 +139,25 @@ static void MX_ADC1_Init(void)
 
 int main(void)
 {
-  /* USER CODE BEGIN 1 */
 
-  /* USER CODE END 1 */
+	sec10Tk = 0;
+	HAL_Init();
+	SystemClock_Config();
+	MX_GPIO_Init();
+	MX_ADC1_Init();
+	MX_CAN_Init();
 
-  /* MCU Configuration--------------------------------------------------------*/
-
-  /* Reset of all peripherals, Initializes the Flash interface and the Systick. */
-  HAL_Init();
-
-  /* USER CODE BEGIN Init */
-
-  /* USER CODE END Init */
-
-  /* Configure the system clock */
-  SystemClock_Config();
-
-  /* USER CODE BEGIN SysInit */
-
-  /* USER CODE END SysInit */
-
-  /* Initialize all configured peripherals */
-  MX_GPIO_Init();
-  MX_ADC1_Init();
-  MX_CAN_Init();
-  /* USER CODE BEGIN 2 */
-
-  /* USER CODE END 2 */
-
-  /* Infinite loop */
-  /* USER CODE BEGIN WHILE */
-  uint32_t tickstart;
   while (1)
   {
-
-	  tickstart = HAL_GetTick();
-	  sendPingToTempixController();
-	  while ((HAL_GetTick() - tickstart) < 100)
-	      {
-
-	      }
-
-
-
-    /* USER CODE END WHILE */
-
-    /* USER CODE BEGIN 3 */
+	  if (sec10Tk > 0) {
+		  sec10Tk = 0;
+		  sendPingToTempixController();
+	  }
   }
-  /* USER CODE END 3 */
+
 }
 
-/**
-  * @brief System Clock Configuration
-  * @retval None
-  */
+
 void SystemClock_Config(void)
 {
   RCC_OscInitTypeDef RCC_OscInitStruct = {0};
