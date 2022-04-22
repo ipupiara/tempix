@@ -292,6 +292,8 @@ void MX_CAN_Init(void)
     Error_Handler();
   }
 
+  initCanFilters();
+
   HAL_NVIC_SetPriority(CAN1_TX_IRQn, 0, 0);
   HAL_NVIC_EnableIRQ(CAN1_TX_IRQn);
   HAL_NVIC_SetPriority(CAN1_RX0_IRQn, 0, 0);
@@ -313,7 +315,7 @@ void MX_CAN_Init(void)
   __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_BOFIE);
   __HAL_CAN_ENABLE_IT(&hcan,CAN_IER_LECIE);
 
-
+  HAL_CAN_Start(&hcan);  // clears CAN_MCR_INRQ
 
 }
 

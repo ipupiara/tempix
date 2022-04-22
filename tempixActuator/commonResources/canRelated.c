@@ -19,7 +19,7 @@ uint8_t addTxMessage(CAN_HandleTypeDef *hcan, CAN_TxHeaderTypeDef *pHeader, uint
 {
   uint32_t transmitmailbox;
 
-    /* Check that all the Tx mailboxes are not full */
+    /* Check that not all the Tx mailboxes are  full */
     if (((hcan->Instance->TSR & CAN_TSR_TME0) != 0) ||
         ((hcan->Instance->TSR & CAN_TSR_TME1) != 0) ||
         ((hcan->Instance->TSR & CAN_TSR_TME2) != 0))
