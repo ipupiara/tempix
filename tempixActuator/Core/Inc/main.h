@@ -29,7 +29,6 @@ extern "C" {
 
 void Error_Handler(void);
 
-void sec10Tick();
 
 #ifdef __cplusplus
 }

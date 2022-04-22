@@ -25,7 +25,8 @@
 extern ADC_HandleTypeDef hadc1;
 extern uint16_t lastADCResult;
 
-extern void sec10Tick();
+extern uint8_t sec10Event;
+extern uint8_t sec100Event;
 
 extern CAN_HandleTypeDef hcan;
 /* USER CODE BEGIN EV */
@@ -155,12 +156,6 @@ void PendSV_Handler(void)
 
 uint8_t tickIntervalCnt;
 
-__weak void sec10Tick()
-{
-//  uint8_t res;
-//  UNUSED(res);
-}
-
 
 void SysTick_Handler(void)
 {
@@ -168,9 +163,12 @@ void SysTick_Handler(void)
 
   /* USER CODE END SysTick_IRQn 0 */
   HAL_IncTick();
+  if ((uwTick % 10) == 0){  //  todo check this with disassemble for effectiveness
+  	  sec100Event = 1;
+    }
   if (tickIntervalCnt > 100) {
 	  tickIntervalCnt = 0;
-	  sec10Tick();
+	  sec10Event = 1;
   }
   ++ tickIntervalCnt;
 

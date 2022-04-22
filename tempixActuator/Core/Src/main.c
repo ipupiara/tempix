@@ -53,12 +53,9 @@ static void MX_GPIO_Init(void);
   * @retval int
   */
 
-uint8_t sec10Tk;
+uint8_t sec10Event;
+uint8_t sec100Event;
 
-void sec10Tick()
-{
-	sec10Tk = 1;
-}
 
 
 static void MX_ADC1_Init(void)
@@ -140,7 +137,7 @@ static void MX_ADC1_Init(void)
 int main(void)
 {
 
-	sec10Tk = 0;
+	sec10Event = 0;
 	HAL_Init();
 	SystemClock_Config();
 	MX_GPIO_Init();
@@ -149,8 +146,12 @@ int main(void)
 
   while (1)
   {
-	  if (sec10Tk > 0) {
-		  sec10Tk = 0;
+//	  if (sec10Event > 0) {
+//		  sec10Event = 0;
+//		  sendPingToTempixController();
+//	  }
+	  if (sec100Event > 0) {
+		  sec100Event = 0;
 		  sendPingToTempixController();
 	  }
   }
