@@ -278,6 +278,7 @@ void MX_CAN_Init(void)
 
 
   hcan.Instance = CAN1;
+//  hcan.Init.Prescaler =  clockRelValueVsMaxClk(uint16_t valAtMax);
   hcan.Init.Prescaler =  48; //   125 kb/s;
   hcan.Init.Mode = CAN_MODE_NORMAL;
   hcan.Init.SyncJumpWidth = CAN_SJW_1TQ;

@@ -29,6 +29,8 @@ typedef struct  {
 
 } backGroundEvent ;
 
+uint16_t clockRelValueVsMaxClk(uint16_t valAtMax);
+
 #define backGroundEventBufSz    7
 
 uint8_t proceedBackGroundEvent(backGroundEvent* bgEv);

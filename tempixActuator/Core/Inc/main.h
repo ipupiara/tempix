@@ -29,6 +29,8 @@ extern "C" {
 
 void Error_Handler(void);
 
+uint16_t clockRelValueVsMaxClk(uint16_t valAtMax);
+
 
 #ifdef __cplusplus
 }

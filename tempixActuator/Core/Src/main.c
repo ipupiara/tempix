@@ -56,6 +56,21 @@ static void MX_GPIO_Init(void);
 uint8_t sec10Event;
 uint8_t sec100Event;
 
+uint16_t clockRelValueVsMaxClk(uint16_t valAtMax)
+{
+	uint16_t res = 0;
+	double dValAtMax = (double) valAtMax;
+
+	double dMaxF = 72000000.0;
+	double dActF = (double) HAL_RCC_GetHCLKFreq();
+
+
+	double dValAtAct = dValAtMax / dMaxF;
+	dValAtAct = dValAtAct *  dActF;
+	res = (uint16_t) dValAtAct;
+
+	return res;
+}
 
 
 static void MX_ADC1_Init(void)
@@ -108,7 +123,8 @@ static void MX_ADC1_Init(void)
   */
   sConfig.Channel = ADC_CHANNEL_1;
   sConfig.Rank = ADC_REGULAR_RANK_1;
-  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
+  sConfig.SamplingTime = ADC_SAMPLETIME_71CYCLES_5;
+//  sConfig.SamplingTime = ADC_SAMPLETIME_239CYCLES_5;
   if (HAL_ADC_ConfigChannel(&hadc1, &sConfig) != HAL_OK)
   {
     Error_Handler();

@@ -64,6 +64,21 @@ static  OS_STK  StartupTaskStk[APP_CFG_STARTUP_TASK_STK_SIZE];
 
 static  void  StartupTask (void  *p_arg);
 
+uint16_t clockRelValueVsMaxClk(uint16_t valAtMax)
+{
+	uint16_t res = 0;
+	double dValAtMax = (double) valAtMax;
+
+	double dMaxF = 216000000.0;
+	double dActF = (double) HAL_RCC_GetHCLKFreq();
+
+
+	double dValAtAct = dValAtMax / dMaxF;
+	dValAtAct = dValAtAct *  dActF;
+	res = (uint16_t) dValAtAct;
+
+	return res;
+}
 
 void initEventQ()
 {
