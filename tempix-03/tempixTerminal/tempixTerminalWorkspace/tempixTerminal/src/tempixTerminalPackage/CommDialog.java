@@ -7,6 +7,10 @@
 // TODO  move comport to tempixTerminal since it is used also for other than comms Tests !
 package tempixTerminalPackage;
 
+import java.util.Date;
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  *
@@ -17,7 +21,9 @@ public class CommDialog extends javax.swing.JDialog {
     private static TempixTerminal ownerFrame;    
     private int pingNum;
     private static CommDialog dialog;
-    
+    private Timer pingTimer = null;
+    private TimerTask task = null;
+    Timer aTimer = null;
     
     /**
      * Creates new form CommDialog
@@ -29,6 +35,7 @@ public class CommDialog extends javax.swing.JDialog {
         initComponents();
         pingText.setText("the quick brown fox jumped over the lazy dog.");
 //        pingText.setText("the quick brown fox jumped over th");
+  
     }
 
     /**
@@ -44,6 +51,9 @@ public class CommDialog extends javax.swing.JDialog {
         pingText = new javax.swing.JTextField();
         listPortsButton = new javax.swing.JButton();
         closePortButton = new javax.swing.JButton();
+        cntTextField = new javax.swing.JTextField();
+        startPingButton = new javax.swing.JButton();
+        stopPingButton = new javax.swing.JButton();
 
         setDefaultCloseOperation(javax.swing.WindowConstants.DISPOSE_ON_CLOSE);
 
@@ -72,6 +82,30 @@ public class CommDialog extends javax.swing.JDialog {
             }
         });
 
+        cntTextField.setEditable(false);
+        cntTextField.setText("cntTextField");
+        cntTextField.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                cntTextFieldActionPerformed(evt);
+            }
+        });
+
+        startPingButton.setText("start ping");
+        startPingButton.setActionCommand("startPingPressed");
+        startPingButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                startPingButtonActionPerformed(evt);
+            }
+        });
+
+        stopPingButton.setText("stop Ping");
+        stopPingButton.setActionCommand("stopPing");
+        stopPingButton.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                stopPingButtonActionPerformed(evt);
+            }
+        });
+
         javax.swing.GroupLayout layout = new javax.swing.GroupLayout(getContentPane());
         getContentPane().setLayout(layout);
         layout.setHorizontalGroup(
@@ -80,13 +114,22 @@ public class CommDialog extends javax.swing.JDialog {
                 .addGap(52, 52, 52)
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
                     .addGroup(layout.createSequentialGroup()
-                        .addComponent(listPortsButton)
-                        .addGap(18, 18, 18)
-                        .addComponent(closePortButton))
-                    .addGroup(layout.createSequentialGroup()
                         .addComponent(uartPingButton)
                         .addGap(18, 18, 18)
-                        .addComponent(pingText, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE)))
+                        .addComponent(pingText, javax.swing.GroupLayout.DEFAULT_SIZE, 380, Short.MAX_VALUE))
+                    .addGroup(layout.createSequentialGroup()
+                        .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(listPortsButton)
+                                .addGap(18, 18, 18)
+                                .addComponent(closePortButton))
+                            .addGroup(layout.createSequentialGroup()
+                                .addComponent(cntTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                                .addGap(157, 157, 157)
+                                .addComponent(startPingButton)
+                                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.UNRELATED)
+                                .addComponent(stopPingButton)))
+                        .addGap(0, 0, Short.MAX_VALUE)))
                 .addContainerGap())
         );
         layout.setVerticalGroup(
@@ -100,7 +143,12 @@ public class CommDialog extends javax.swing.JDialog {
                 .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
                     .addComponent(listPortsButton)
                     .addComponent(closePortButton))
-                .addContainerGap(192, Short.MAX_VALUE))
+                .addGap(31, 31, 31)
+                .addGroup(layout.createParallelGroup(javax.swing.GroupLayout.Alignment.BASELINE)
+                    .addComponent(cntTextField, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
+                    .addComponent(startPingButton)
+                    .addComponent(stopPingButton))
+                .addContainerGap(136, Short.MAX_VALUE))
         );
 
         pack();
@@ -120,9 +168,47 @@ public class CommDialog extends javax.swing.JDialog {
 
     private void closePortButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_closePortButtonActionPerformed
         // TODO add your handling code here:
+        stopPing();
         String res = JSerialCommsController.closePort();
         ownerFrame.addToLog("close port returned: "+res+"\n");
     }//GEN-LAST:event_closePortButtonActionPerformed
+
+    private void cntTextFieldActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_cntTextFieldActionPerformed
+        // TODO add your handling code here:
+    }//GEN-LAST:event_cntTextFieldActionPerformed
+
+    private void startPingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_startPingButtonActionPerformed
+        //  startButton
+        if (aTimer == null ) {
+            aTimer = new Timer();
+            task = new TimerTask() {
+                  public void run() {
+                       ++ pingNum;
+                        String txt = String.format("%7d", pingNum);
+                      JSerialCommsController.sendString("@ping:"+txt);
+                        pingNum= pingNum + 1; 
+                        cntTextField.setText(txt);
+ //                        System.out.println("Task performed on: " + new Date() + "n" +
+ //             "Thread's name: " + Thread.currentThread().getName()+" "+txt);
+                        
+  //                      cntTextField.setText(txt);
+                  }
+              };
+            aTimer.scheduleAtFixedRate(task, 100, 40);
+        };
+    }//GEN-LAST:event_startPingButtonActionPerformed
+
+    private void stopPing()  {
+        if (aTimer != null) {
+            aTimer.cancel();
+            aTimer = null;
+        }
+    }
+    
+    private void stopPingButtonActionPerformed(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_stopPingButtonActionPerformed
+        // stop Button Presssed
+        stopPing();
+    }//GEN-LAST:event_stopPingButtonActionPerformed
 
     /**
      * @param args the command line arguments
@@ -168,8 +254,11 @@ public class CommDialog extends javax.swing.JDialog {
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JButton closePortButton;
+    private javax.swing.JTextField cntTextField;
     private javax.swing.JButton listPortsButton;
     private javax.swing.JTextField pingText;
+    private javax.swing.JButton startPingButton;
+    private javax.swing.JButton stopPingButton;
     private javax.swing.JButton uartPingButton;
     // End of variables declaration//GEN-END:variables
 

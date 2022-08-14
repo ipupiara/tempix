@@ -12,7 +12,6 @@ import com.fazecast.jSerialComm.*;
  * @author peetz
  */
 public class JSerialCommsController  {
-    
     private static SerialPort comPort = null;
     private int rcvMsgAmt = 0;
     
@@ -43,9 +42,9 @@ public class JSerialCommsController  {
                 comPort = SerialPort.getCommPorts()[0];  // assumed to be the only one, ok for debuggging tempix
                                                           //   else let the user choose on UI which to open
                 res = res.concat("trying port "+comPort.getSystemPortName() + "\n");
-                   //comPort.setComPortParameters(4800, 8, comPort.ONE_STOP_BIT, comPort.NO_PARITY);  
-                   comPort.setComPortParameters(57600, 8, comPort.ONE_STOP_BIT, comPort.NO_PARITY);  
- //               comPort.setComPortParameters(9600, 8, comPort.ONE_STOP_BIT, comPort.NO_PARITY);  
+                  comPort.setComPortParameters(4800, 8, comPort.ONE_STOP_BIT, comPort.NO_PARITY);  
+  //                 comPort.setComPortParameters(57600, 8, comPort.ONE_STOP_BIT, comPort.NO_PARITY);  
+  //                comPort.setComPortParameters(9600, 8, comPort.ONE_STOP_BIT, comPort.NO_PARITY);  
   //               comPort.setComPortParameters(19200, 8, comPort.ONE_STOP_BIT, comPort.NO_PARITY);  
                 comPort.setComPortTimeouts(SerialPort.TIMEOUT_READ_SEMI_BLOCKING, 0x00FFFFFF ,0 );  
                 // timeouts tobe tested since documentation are very rare missing messageTimeout and intercharacterTimeout

@@ -3,7 +3,12 @@
  * To change this template file, choose Tools | Templates
  * and open the template in the editor.
  */
+
 package tempixTerminalPackage;
+
+import java.util.Timer;
+import java.util.TimerTask;
+
 
 /**
  *
@@ -12,6 +17,9 @@ package tempixTerminalPackage;
 public class TempixTerminal extends javax.swing.JFrame {
     private JSerialCommsController commsController;
     private static TempixTerminal tempixTerm;
+    
+    private static int cnt = 0;
+
     /**
      * Creates new form tempixTerminalUI
      */
@@ -151,8 +159,10 @@ public class TempixTerminal extends javax.swing.JFrame {
         if (tempixTerm != null) {  
             tempixTerm.addToLog(str);
         }
+        
     }
-
+    
+  
     /**
      * @param args the command line arguments
      */
@@ -182,6 +192,9 @@ public class TempixTerminal extends javax.swing.JFrame {
         //</editor-fold>
         //</editor-fold>
         //</editor-fold>
+        
+
+ 
 
         /* Create and display the form */
         java.awt.EventQueue.invokeLater(new Runnable() {
@@ -190,6 +203,8 @@ public class TempixTerminal extends javax.swing.JFrame {
                 tempixTerm.setVisible(true);
             }
         });
+        
+        
     }
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
